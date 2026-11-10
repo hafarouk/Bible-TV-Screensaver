@@ -2,6 +2,8 @@ package com.velthon.bibletv;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Canvas;
+import android.graphics.Bitmap;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import android.animation.ObjectAnimator;
 import android.animation.AnimatorSet;
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import java.util.ArrayList;
 import java.util.Random;
 import org.json.JSONArray;
@@ -31,6 +34,7 @@ public class BibleDisplay extends FrameLayout {
  private SharedPreferences prefs;private Handler handler=new Handler(Looper.getMainLooper());
  private ImageView picture;private View fallback;private TextView verse,reference,caption;
  private AnimatorSet motion;private int index=-1;private boolean running=false;
+ private ImageView turningPage;
  private String[][] verses;
  private final Random random=new Random();
  private final AmbientMusic music=new AmbientMusic();
@@ -63,9 +67,17 @@ public class BibleDisplay extends FrameLayout {
  caption=new TextView(c);caption.setText("Velthon Design & Development");caption.setTextColor(0xffe8e0d0);caption.setTextSize(12);caption.setGravity(Gravity.CENTER);LayoutParams cp=new LayoutParams(-1,-2,Gravity.BOTTOM);cp.bottomMargin=18;addView(caption,cp);
  }
  public void start(){running=true;if(prefs.getBoolean("music",false))music.start(getContext(),prefs.getInt("music_volume",25));next();}
- public void stop(){running=false;music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();}
+ public void stop(){running=false;music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}}
  public void next(){handler.removeCallbacksAndMessages(null);if(!running)return;int chosen=chooseIndex();
  if(chosen<0){handler.postDelayed(()->next(),1000L);return;}
+ // Capture the previous screen before changing its verse, for an animated Bible page turn.
+ Bitmap previousScreen=null;
+ String transition=prefs.getString("transition_choice","page");
+ if(index>=0 && getWidth()>0 && getHeight()>0 && !"none".equals(transition)){
+   try{previousScreen=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);draw(new Canvas(previousScreen));}
+   catch(OutOfMemoryError ignored){previousScreen=null;}
+ }
+ if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}
  index=chosen;
  String[] v=verses[index];String l=prefs.getString("lang","ar");verse.setText(l.equals("en")?v[1]:l.equals("both")?v[0]+"\n\n"+v[1]:v[0]);reference.setText(v[2]);
  int theme=prefs.getInt("style",0);
@@ -74,6 +86,7 @@ public class BibleDisplay extends FrameLayout {
  picture.setImageResource(ART[photo]);
  picture.setAlpha(0f);picture.animate().alpha(1f).setDuration(850).start();
  animatePicture();
+ if(previousScreen!=null)animateTransition(previousScreen,transition);
  handler.postDelayed(()->next(),Math.max(15,prefs.getInt("interval",30))*1000L);
  }
  // The translation pair comes from public-domain SVD and KJV, packaged for offline use.
@@ -102,6 +115,32 @@ public class BibleDisplay extends FrameLayout {
    int chosen=eligible.get(random.nextInt(eligible.size()));
    prefs.edit().putLong("verse_seen_"+verses[chosen][2],now).apply();
    return chosen;
+ }
+ private void animateTransition(Bitmap oldScreen,String type){
+   ImageView page=new ImageView(getContext());
+   page.setImageBitmap(oldScreen);
+   page.setScaleType(ImageView.ScaleType.FIT_XY);
+   page.setLayoutParams(new FrameLayout.LayoutParams(-1,-1));
+   addView(page);turningPage=page;
+   page.setPivotX(0f);page.setPivotY(getHeight()/2f);
+   page.setCameraDistance(8000f*getResources().getDisplayMetrics().density);
+   if("fade".equals(type)){
+     page.animate().alpha(0f).setDuration(850).setListener(new AnimatorListenerAdapter(){
+       @Override public void onAnimationEnd(Animator a){clearPage(page,oldScreen);}
+       @Override public void onAnimationCancel(Animator a){clearPage(page,oldScreen);}
+     }).start();
+   }else{
+     // A lightweight 3D Bible-page-turn approximation, optimized for low-power Android TVs.
+     page.animate().rotationY(-86f).translationX(-getWidth()*0.03f).alpha(0.08f).setDuration(950).setListener(new AnimatorListenerAdapter(){
+       @Override public void onAnimationEnd(Animator a){clearPage(page,oldScreen);}
+       @Override public void onAnimationCancel(Animator a){clearPage(page,oldScreen);}
+     }).start();
+   }
+ }
+ private void clearPage(ImageView page,Bitmap image){
+   if(page.getParent()==this)removeView(page);
+   if(turningPage==page)turningPage=null;
+   if(!image.isRecycled())image.recycle();
  }
  private void animatePicture(){if(motion!=null)motion.cancel();picture.setScaleX(1.0f);picture.setScaleY(1.0f);
  if(!prefs.getBoolean("motion",true))return;
