@@ -16,3 +16,6 @@ The Android TV app builds using the GitHub Actions workflow once its Android sou
 - Android TV / Fire TV: APK
 - Samsung Tizen: WGT (must be signed appropriately)
 - LG webOS: IPK
+
+## v1.5 speaker remote compile recheck
+Fixed API handlers, on-screen mute button and soft music selection.
