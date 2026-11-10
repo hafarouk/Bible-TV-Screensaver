@@ -17,6 +17,7 @@ import android.widget.ImageView;
 
 /** A D-pad accessible two-column TV settings layout. Choices are visible inline, not hidden in a cycling button. */
 public class MainActivity extends Activity {
+ @Override protected void onPause(){previewMusic.stop();super.onPause();}
  private SharedPreferences prefs;
  private LinearLayout panel;
  private final AmbientMusic previewMusic=new AmbientMusic();
@@ -61,7 +62,7 @@ public class MainActivity extends Activity {
    ImageView originalLogo=new ImageView(this);originalLogo.setImageResource(R.drawable.velthon_original);originalLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
    LinearLayout.LayoutParams originalParams=new LinearLayout.LayoutParams(43,44);originalParams.rightMargin=14;
    titleRow.addView(originalLogo,originalParams);
-   TextView title=text("✝  BIBLE TV   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
+   TextView title=text("✝  BIBLE TV v1.6   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
    panel.addView(titleRow);
    TextView sub=text("Screensaver settings  •  Select directly within each row using your remote",14,SUB);sub.setPadding(0,0,0,8);panel.addView(sub);
    row("Language / اللغة","lang",new String[]{"العربية","English","Both"},new String[]{"ar","en","both"},"ar");
@@ -70,12 +71,12 @@ public class MainActivity extends Activity {
    row("Picture movement","motion_choice",new String[]{"On","Off"},new String[]{"true","false"},"true");
    row("Verse transition","transition_choice",new String[]{"Page turn","Soft fade","None"},new String[]{"page","fade","none"},"page");
    row("Animation speed","motion_speed_choice",new String[]{"Slow","Medium","Faster"},new String[]{"0","1","2"},"0");
-   row("Background music","music_track",new String[]{"Off","Soft Piano","Gentle Strings","Peaceful Ambient"},new String[]{"off","piano","strings","ambient"},"off");
-   row("Music volume","music_volume_choice",new String[]{"10%","20%","35%","50%"},new String[]{"10","20","35","50"},"10");
+   row("Background music","music_track",new String[]{"Off","Soft Piano","Gentle Strings","Peaceful Ambient"},new String[]{"off","piano","strings","ambient"},"piano");
+   row("Music volume","music_volume_choice",new String[]{"15%","25%","35%","50%"},new String[]{"15","25","35","50"},"25");
    action("♫  Preview selected music (tap again to stop)",()->{
-      String choice=prefs.getString("music_track","off");
+      String choice=prefs.getString("music_track","piano");
       if("off".equals(choice)){previewMusic.stop();new android.app.AlertDialog.Builder(this).setMessage("Select a music option first.").setPositiveButton("OK",null).show();}
-      else previewMusic.start(this,Integer.parseInt(prefs.getString("music_volume_choice","10")),choice);
+      else {previewMusic.start(this,Integer.parseInt(prefs.getString("music_volume_choice","25")),choice);android.widget.Toast.makeText(this,"Now playing "+choice+" • adjust TV volume to hear",android.widget.Toast.LENGTH_LONG).show();}
    });
    action("▶   Preview Bible TV screensaver",()->startActivity(new Intent(this,PreviewActivity.class)));
    action("⚙   Open TV screensaver selection",this::openTvSettings);
