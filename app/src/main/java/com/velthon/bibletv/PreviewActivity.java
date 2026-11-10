@@ -12,7 +12,7 @@ public class PreviewActivity extends Activity {
     @Override public void onResume(){super.onResume();display.start();}
     @Override public void onPause(){display.stop();super.onPause();}
     @Override public boolean onKeyDown(int key,KeyEvent e) {
-        if(key==KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE || key==KeyEvent.KEYCODE_MEDIA_MUTE || key==KeyEvent.KEYCODE_M){
+        if(key==KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE || key==KeyEvent.KEYCODE_VOLUME_MUTE || key==KeyEvent.KEYCODE_M){
             display.toggleMute();return true;
         }
         if(key==KeyEvent.KEYCODE_DPAD_RIGHT||key==KeyEvent.KEYCODE_DPAD_LEFT){display.next();return true;}
