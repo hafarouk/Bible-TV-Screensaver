@@ -36,6 +36,7 @@ public class BibleDisplay extends FrameLayout {
  private View turningPage;
  private SceneLoopView sceneLoop;
  private TextView sceneTag;
+ private int mediaIndex=-1;
  private TextView muteButton;
  private boolean temporaryMuted=false;
  private String[][] verses;
@@ -58,6 +59,7 @@ public class BibleDisplay extends FrameLayout {
  public BibleDisplay(Context c){super(c);prefs=c.getSharedPreferences("settings",Context.MODE_PRIVATE);verses=loadVerses(c);
  fallback=new View(c);fallback.setBackground(new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{0xff0b1b31,0xff435971,0xffc38b53}));addView(fallback,new LayoutParams(-1,-1));
  picture=new ImageView(c);picture.setScaleType(ImageView.ScaleType.CENTER_CROP);addView(picture,new LayoutParams(-1,-1));
+ sceneLoop=new SceneLoopView(c);addView(sceneLoop,new LayoutParams(-1,-1));
  View shade=new View(c);shade.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{0x66000000,0x33000000,0xdd050c17}));addView(shade,new LayoutParams(-1,-1));
  LinearLayout card=new LinearLayout(c);card.setGravity(Gravity.CENTER);card.setOrientation(LinearLayout.VERTICAL);card.setPadding(40,25,40,25);addView(card,new LayoutParams(-1,-1));
 
@@ -92,7 +94,7 @@ public class BibleDisplay extends FrameLayout {
    muteButton.setContentDescription(disabled?"Music is turned off in settings":temporaryMuted?"Unmute music":"Mute music");
    muteButton.setVisibility(disabled?View.GONE:View.VISIBLE);
  }
- public void stop(){running=false;music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}}
+ public void stop(){running=false;sceneLoop.setVisibility(View.GONE);music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}}
  public void next(){handler.removeCallbacksAndMessages(null);if(!running)return;int chosen=chooseIndex();
  if(chosen<0){handler.postDelayed(()->next(),1000L);return;}
  // Capture the previous screen before changing its verse, for an animated Bible page turn.
@@ -122,10 +124,14 @@ public class BibleDisplay extends FrameLayout {
  else if(en.contains("heaven")||en.contains("star")||en.contains("night"))photo=7;
  else if(photo==0 && !en.contains("shepherd") && !en.contains("sheep"))photo=3+Math.abs(index%5);
  
+ String mode=prefs.getString("media_mode","animated");
+ boolean animated=!"photos".equals(mode);
+ sceneLoop.setVisibility(animated?View.VISIBLE:View.GONE);
+ picture.setVisibility(animated?View.GONE:View.VISIBLE);
+ if(animated){int nextMedia;do{nextMedia=random.nextInt(60);}while(nextMedia==mediaIndex);mediaIndex=nextMedia;sceneLoop.setScene(String.format(java.util.Locale.US,"motion_%02d",mediaIndex));}
  picture.animate().cancel();
  picture.setImageResource(ART[photo]);
- picture.setAlpha(0f);picture.animate().alpha(1f).setDuration(850).start();
- animatePicture();
+ if(!animated){picture.setAlpha(0f);picture.animate().alpha(1f).setDuration(850).start();animatePicture();}
  if(previousScreen!=null)animateTransition(previousScreen,transition);
  handler.postDelayed(()->next(),Math.max(15,prefs.getInt("interval",30))*1000L);
  }
