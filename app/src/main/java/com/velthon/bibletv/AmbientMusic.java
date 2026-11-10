@@ -11,10 +11,10 @@ final class AmbientMusic {
      "ambient".equals(choice)?R.raw.music_ambient:R.raw.music_piano;
    try {
      player=MediaPlayer.create(context,track);
-     if(player==null)return;
+     if(player==null){android.util.Log.e("BibleTV","Music player was not created for track "+track);return;}
      player.setLooping(true);
      // 10-60% setting maps to subtle background levels to avoid overpowering verses.
-     float level=Math.min(0.22f,Math.max(0f,volume/100f)*0.20f);
+     float level=Math.min(0.65f,Math.max(0f,volume/100f)*1.0f);
      player.setVolume(level,level);
      player.start();
    } catch(Exception e){stop();android.util.Log.w("BibleTV","Unable to start selected music",e);}
