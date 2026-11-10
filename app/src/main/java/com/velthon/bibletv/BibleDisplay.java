@@ -35,6 +35,8 @@ public class BibleDisplay extends FrameLayout {
  private ImageView picture;private View fallback;private TextView verse,reference,caption;
  private AnimatorSet motion;private int index=-1;private boolean running=false;
  private ImageView turningPage;
+ private SceneLoopView sceneLoop;
+ private TextView sceneTag;
  private TextView muteButton;
  private boolean temporaryMuted=false;
  private String[][] verses;
@@ -67,6 +69,19 @@ public class BibleDisplay extends FrameLayout {
  verse=new TextView(c);verse.setGravity(Gravity.CENTER);verse.setTextDirection(View.TEXT_DIRECTION_FIRST_STRONG);verse.setTextColor(Color.WHITE);verse.setTextSize(37);verse.setTypeface(Typeface.DEFAULT,Typeface.BOLD);verse.setShadowLayer(8,2,3,Color.BLACK);verse.setPadding(10,22,10,22);card.addView(verse);
  reference=new TextView(c);reference.setGravity(Gravity.CENTER);reference.setTextColor(0xffffdfa2);reference.setTextSize(22);reference.setShadowLayer(5,2,2,Color.BLACK);card.addView(reference);
  caption=new TextView(c);caption.setText("Velthon Design & Development");caption.setTextColor(0xffe8e0d0);caption.setTextSize(12);caption.setGravity(Gravity.CENTER);LayoutParams cp=new LayoutParams(-1,-2,Gravity.BOTTOM);cp.bottomMargin=18;addView(caption,cp);
+ // A small animated scene window that stays inside safe TV overscan margins.
+ FrameLayout mini=new FrameLayout(c);
+ GradientDrawable frame=new GradientDrawable();frame.setColor(0xdd0a1828);frame.setCornerRadius(16);frame.setStroke(2,0xffd1a65b);
+ mini.setBackground(frame);mini.setPadding(5,5,5,5);
+ FrameLayout.LayoutParams miniParams=new FrameLayout.LayoutParams(258,166,Gravity.BOTTOM|Gravity.LEFT);
+ miniParams.setMargins(35,0,0,35);addView(mini,miniParams);
+ sceneLoop=new SceneLoopView(c);
+ mini.addView(sceneLoop,new FrameLayout.LayoutParams(-1,-1));
+ sceneTag=new TextView(c);sceneTag.setTextSize(12);sceneTag.setTextColor(0xffffffff);
+ sceneTag.setGravity(Gravity.CENTER);sceneTag.setBackgroundColor(0xb8091727);
+ FrameLayout.LayoutParams tagP=new FrameLayout.LayoutParams(-1,28,Gravity.BOTTOM);
+ mini.addView(sceneTag,tagP);
+
  muteButton=new TextView(c);
  muteButton.setTextSize(23);muteButton.setGravity(Gravity.CENTER);
  muteButton.setTextColor(0xffffffff);muteButton.setFocusable(true);muteButton.setClickable(true);
@@ -106,7 +121,17 @@ public class BibleDisplay extends FrameLayout {
  index=chosen;
  String[] v=verses[index];String l=prefs.getString("lang","ar");verse.setText(l.equals("en")?v[1]:l.equals("both")?v[0]+"\n\n"+v[1]:v[0]);reference.setText(v[2]);
  int theme=prefs.getInt("style",0);
- int photo=theme==1? (index%2==0?1:3) : theme==2? (index*3+1)%4 : index%4;
+ // Link artwork to the meaning of the verse, not just the iteration number.
+ String ar=v[0],en=v[1].toLowerCase(java.util.Locale.US),ref=v[2].toLowerCase(java.util.Locale.US);
+ String selectedScene;
+ if(en.contains("shepherd")||en.contains("sheep")||en.contains("pasture")||ref.startsWith("ps"))selectedScene="shepherd";
+ else if(en.contains("storm")||en.contains("tempest")||en.contains("wind")||en.contains("sea")||en.contains("water")||en.contains("fear"))selectedScene="storm";
+ else if(en.contains("child")||en.contains("children")||en.contains("come unto")||en.contains("love")||en.contains("peace")||en.contains("heart"))selectedScene="welcome";
+ else selectedScene="shepherd";
+ if(theme==1 && selectedScene.equals("welcome"))selectedScene="shepherd";
+ int photo=selectedScene.equals("storm")?1:selectedScene.equals("welcome")?2:0;
+ sceneLoop.setScene(selectedScene);
+ sceneTag.setText(selectedScene.equals("storm")?"FAITH THROUGH STORMS":selectedScene.equals("welcome")?"THE LOVE OF CHRIST":"THE GOOD SHEPHERD");
  picture.animate().cancel();
  picture.setImageResource(ART[photo]);
  picture.setAlpha(0f);picture.animate().alpha(1f).setDuration(850).start();
