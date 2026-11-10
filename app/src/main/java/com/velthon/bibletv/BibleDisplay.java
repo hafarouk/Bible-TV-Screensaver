@@ -26,6 +26,8 @@ public class BibleDisplay extends FrameLayout {
  private SharedPreferences prefs;private Handler handler=new Handler(Looper.getMainLooper());
  private ImageView picture;private View fallback;private TextView verse,reference,caption;
  private AnimatorSet motion;private int index=-1;private boolean running=false;
+ private final AmbientMusic music=new AmbientMusic();
+ private static final long ONE_HOUR_MS=3600000L;
  // Public-domain artwork from Wikimedia Commons. Loaded once and cached locally for repeat/offline viewing.
  private static final String[] IMAGES={
  "https://commons.wikimedia.org/wiki/Special:FilePath/GoodShepherdYoungJesus.jpg?width=1024",
@@ -52,13 +54,27 @@ public class BibleDisplay extends FrameLayout {
  reference=new TextView(c);reference.setGravity(Gravity.CENTER);reference.setTextColor(0xffffdfa2);reference.setTextSize(22);reference.setShadowLayer(5,2,2,Color.BLACK);card.addView(reference);
  caption=new TextView(c);caption.setText("Velthon Design & Development");caption.setTextColor(0xffe8e0d0);caption.setTextSize(12);caption.setGravity(Gravity.CENTER);LayoutParams cp=new LayoutParams(-1,-2,Gravity.BOTTOM);cp.bottomMargin=18;addView(caption,cp);
  }
- public void start(){running=true;next();}
- public void stop(){running=false;handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();}
- public void next(){handler.removeCallbacksAndMessages(null);if(!running)return;index=(index+1)%VERSES.length;
+ public void start(){running=true;if(prefs.getBoolean("music",false))music.start(prefs.getInt("music_volume",25));next();}
+ public void stop(){running=false;music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();}
+ public void next(){handler.removeCallbacksAndMessages(null);if(!running)return;index=chooseIndex();
  String[] v=VERSES[index];String l=prefs.getString("lang","ar");verse.setText(l.equals("en")?v[1]:l.equals("both")?v[0]+"\n\n"+v[1]:v[0]);reference.setText(v[2]);
  int theme=prefs.getInt("style",0);int photo=(theme==1?index%2+2:index%4);
  picture.setImageDrawable(null);loadPicture(photo,index);animatePicture();
  handler.postDelayed(()->next(),Math.max(15,prefs.getInt("interval",30))*1000L);
+ }
+ // Persist verse timestamps between sessions to reduce repetition.
+ private int chooseIndex(){
+   long now=System.currentTimeMillis(),cutoff=now-ONE_HOUR_MS;
+   int choice=-1;long oldest=Long.MAX_VALUE;
+   for(int i=0;i<VERSES.length;i++){
+     long seen=prefs.getLong("verse_seen_"+i,0L);
+     if(seen<cutoff){choice=i;break;}
+     if(seen<oldest){oldest=seen;choice=i;}
+   }
+   if(choice<0)choice=0;
+   // With eight verses this fallback can repeat early; expand the offline verse catalog before enforcing a strict cooldown.
+   prefs.edit().putLong("verse_seen_"+choice,now).apply();
+   return choice;
  }
  private void animatePicture(){if(motion!=null)motion.cancel();picture.setScaleX(1.0f);picture.setScaleY(1.0f);
  if(!prefs.getBoolean("motion",true))return;
