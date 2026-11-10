@@ -128,7 +128,7 @@ public class BibleDisplay extends FrameLayout {
  boolean animated=!"photos".equals(mode);
  sceneLoop.setVisibility(animated?View.VISIBLE:View.GONE);
  picture.setVisibility(animated?View.GONE:View.VISIBLE);
- if(animated){int nextMedia;do{nextMedia=random.nextInt(60);}while(nextMedia==mediaIndex);mediaIndex=nextMedia;sceneLoop.setScene(String.format(java.util.Locale.US,"motion_%02d",mediaIndex));}
+ if(animated){int nextMedia;do{nextMedia=random.nextInt(100);}while(nextMedia==mediaIndex);mediaIndex=nextMedia;sceneLoop.setScene(String.format(java.util.Locale.US,"motion_%02d",mediaIndex));}
  picture.animate().cancel();
  picture.setImageResource(ART[photo]);
  if(!animated){picture.setAlpha(0f);picture.animate().alpha(1f).setDuration(850).start();animatePicture();}
