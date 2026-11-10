@@ -72,10 +72,7 @@ public class MainActivity extends Activity {
    TextView sub=text("Use remote arrows to select an option",14,SUB);sub.setPadding(0,0,0,8);panel.addView(sub);
    row("Language / اللغة","lang",new String[]{"العربية","English","Both"},new String[]{"ar","en","both"},"ar");
    row("Verse time","interval_choice",new String[]{"15 sec","30 sec","60 sec","120 sec"},new String[]{"15","30","60","120"},"15");
-   row("Media","media_mode",new String[]{"Animated","Photos"},new String[]{"animated","photos"},"animated");
-   row("Photo motion","motion_choice",new String[]{"On","Off"},new String[]{"true","false"},"true");
    row("Transition","transition_choice",new String[]{"Page turn","Soft fade","None"},new String[]{"page","fade","none"},"page");
-   row("Motion speed","motion_speed_choice",new String[]{"Slow","Medium","Faster"},new String[]{"0","1","2"},"0");
    row("Music","music_track",new String[]{"Off","Piano","Strings","Ambient"},new String[]{"off","piano","strings","ambient"},"piano");
    row("Volume","music_volume_choice",new String[]{"15%","25%","35%","50%"},new String[]{"15","25","35","50"},"25");
    action("♫  Test music",()->{
