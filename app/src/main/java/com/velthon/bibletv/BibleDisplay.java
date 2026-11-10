@@ -48,14 +48,14 @@ public class BibleDisplay extends FrameLayout {
  // Real pictures are packaged offline during the APK build, so no network is needed.
  private static final int[] ART={R.drawable.shepherd,R.drawable.storm,R.drawable.welcome,R.drawable.scene_sunrise,R.drawable.scene_ocean,R.drawable.scene_mountain,R.drawable.scene_garden,R.drawable.scene_stars};
  private static final String[][] FALLBACK_VERSES={
- {"الرَّبُّ رَاعِيَّ فَلاَ يُعْوِزُنِي شَيْءٌ.","The LORD is my shepherd; I shall not want.","مزمور ٢٣:١ • Psalm 23:1"},
- {"لاَ يَضْطَرِبْ قَلْبُكُمْ. أَنْتُمْ تُؤْمِنُونَ بِاللهِ فَآمِنُوا بِي.","Let not your heart be troubled: ye believe in God, believe also in me.","يوحنا ١٤:١ • John 14:1"},
- {"تَعَالَوْا إِلَيَّ يَا جَمِيعَ الْمُتْعَبِينَ وَالثَّقِيلِي الأَحْمَالِ وَأَنَا أُرِيحُكُمْ.","Come unto me, all ye that labour and are heavy laden, and I will give you rest.","متى ١١:٢٨ • Matthew 11:28"},
- {"كُلَّ شَيْءٍ أَسْتَطِيعُ فِي الْمَسِيحِ الَّذِي يُقَوِّينِي.","I can do all things through Christ which strengtheneth me.","فيلبي ٤:١٣ • Philippians 4:13"},
- {"لاَ تَخَفْ لأَنِّي مَعَكَ.","Fear thou not; for I am with thee.","إشعياء ٤١:١٠ • Isaiah 41:10"},
- {"أَنَا هُوَ نُورُ الْعَالَمِ.","I am the light of the world.","يوحنا ٨:١٢ • John 8:12"},
- {"لأَنَّهُ هكَذَا أَحَبَّ اللهُ الْعَالَمَ حَتَّى بَذَلَ ابْنَهُ الْوَحِيدَ.","For God so loved the world, that he gave his only begotten Son.","يوحنا ٣:١٦ • John 3:16"},
- {"بِالسُّكُونِ وَالطُّمَأْنِينَةِ تَكُونُ قُوَّتُكُمْ.","In quietness and in confidence shall be your strength.","إشعياء ٣٠:١٥ • Isaiah 30:15"}
+ {"الرَّبُّ رَاعِيَّ فَلاَ يُعْوِزُنِي شَيْءٌ.","The LORD is my shepherd; I shall not want.","مزمور ٢٣:١ • Psalm 23:1","مزمور ٢٣:١","Psalm 23:1"},
+ {"لاَ يَضْطَرِبْ قَلْبُكُمْ. أَنْتُمْ تُؤْمِنُونَ بِاللهِ فَآمِنُوا بِي.","Let not your heart be troubled: ye believe in God, believe also in me.","يوحنا ١٤:١ • John 14:1","يوحنا ١٤:١","John 14:1"},
+ {"تَعَالَوْا إِلَيَّ يَا جَمِيعَ الْمُتْعَبِينَ وَالثَّقِيلِي الأَحْمَالِ وَأَنَا أُرِيحُكُمْ.","Come unto me, all ye that labour and are heavy laden, and I will give you rest.","متى ١١:٢٨ • Matthew 11:28","متى ١١:٢٨","Matthew 11:28"},
+ {"كُلَّ شَيْءٍ أَسْتَطِيعُ فِي الْمَسِيحِ الَّذِي يُقَوِّينِي.","I can do all things through Christ which strengtheneth me.","فيلبي ٤:١٣ • Philippians 4:13","فيلبي ٤:١٣","Philippians 4:13"},
+ {"لاَ تَخَفْ لأَنِّي مَعَكَ.","Fear thou not; for I am with thee.","إشعياء ٤١:١٠ • Isaiah 41:10","إشعياء ٤١:١٠","Isaiah 41:10"},
+ {"أَنَا هُوَ نُورُ الْعَالَمِ.","I am the light of the world.","يوحنا ٨:١٢ • John 8:12","يوحنا ٨:١٢","John 8:12"},
+ {"لأَنَّهُ هكَذَا أَحَبَّ اللهُ الْعَالَمَ حَتَّى بَذَلَ ابْنَهُ الْوَحِيدَ.","For God so loved the world, that he gave his only begotten Son.","يوحنا ٣:١٦ • John 3:16","يوحنا ٣:١٦","John 3:16"},
+ {"بِالسُّكُونِ وَالطُّمَأْنِينَةِ تَكُونُ قُوَّتُكُمْ.","In quietness and in confidence shall be your strength.","إشعياء ٣٠:١٥ • Isaiah 30:15","إشعياء ٣٠:١٥","Isaiah 30:15"}
  };
  public BibleDisplay(Context c){super(c);prefs=c.getSharedPreferences("settings",Context.MODE_PRIVATE);verses=loadVerses(c);
  try(InputStream art=c.getAssets().open("jesus_art_manifest.json");ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
@@ -111,7 +111,7 @@ public class BibleDisplay extends FrameLayout {
  }
  if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}
  index=chosen;
- String[] v=verses[index];String l=prefs.getString("lang","ar");verse.setText(l.equals("en")?v[1]:l.equals("both")?v[0]+"\n\n"+v[1]:v[0]);reference.setText(v[2]);
+ String[] v=verses[index];String l=prefs.getString("lang","ar");verse.setText(l.equals("en")?v[1]:l.equals("both")?v[0]+"\n\n"+v[1]:v[0]);reference.setText(l.equals("en")?v[4]:l.equals("both")?v[3]+"  •  "+v[4]:v[3]);
  int theme=prefs.getInt("style",0);
  // Link artwork to the meaning of the verse, not just the iteration number.
  String ar=v[0],en=v[1].toLowerCase(java.util.Locale.US),ref=v[2].toLowerCase(java.util.Locale.US);
@@ -158,10 +158,11 @@ public class BibleDisplay extends FrameLayout {
      byte[] bytes=new byte[8192];int n;while((n=input.read(bytes))!=-1)buffer.write(bytes,0,n);
      JSONArray data=new JSONArray(buffer.toString("UTF-8"));
      if(data.length()<250)throw new IllegalStateException("At least 250 verses required");
-     String[][] all=new String[data.length()][3];
+     String[][] all=new String[data.length()][5];
      for(int i=0;i<data.length();i++){
        JSONObject v=data.getJSONObject(i);
        all[i][0]=v.getString("ar");all[i][1]=v.getString("en");all[i][2]=v.getString("ref");
+       all[i][3]=v.getString("ref_ar");all[i][4]=v.getString("ref_en");
      }
      return all;
    }catch(Exception e){android.util.Log.e("BibleTV","Offline verse library unavailable",e);return FALLBACK_VERSES;}
