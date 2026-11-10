@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 /** A D-pad accessible two-column TV settings layout. Choices are visible inline, not hidden in a cycling button. */
 public class MainActivity extends Activity {
@@ -55,7 +56,12 @@ public class MainActivity extends Activity {
  }
  private void render(){
    panel.removeAllViews();
-   TextView title=text("✝  BIBLE TV   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);panel.addView(title);
+   LinearLayout titleRow=new LinearLayout(this);titleRow.setGravity(Gravity.CENTER_VERTICAL);titleRow.setOrientation(LinearLayout.HORIZONTAL);
+   ImageView originalLogo=new ImageView(this);originalLogo.setImageResource(R.drawable.velthon_original);originalLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
+   LinearLayout.LayoutParams originalParams=new LinearLayout.LayoutParams(43,44);originalParams.rightMargin=14;
+   titleRow.addView(originalLogo,originalParams);
+   TextView title=text("✝  BIBLE TV   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
+   panel.addView(titleRow);
    TextView sub=text("Screensaver settings  •  Select directly within each row using your remote",14,SUB);sub.setPadding(0,0,0,8);panel.addView(sub);
    row("Language / اللغة","lang",new String[]{"العربية","English","Both"},new String[]{"ar","en","both"},"ar");
    row("Verse duration","interval_choice",new String[]{"15 sec","30 sec","60 sec","120 sec"},new String[]{"15","30","60","120"},"15");
@@ -68,7 +74,7 @@ public class MainActivity extends Activity {
    action("⚙   Open TV screensaver selection",this::openTvSettings);
    TextView help=text("Android TV: Settings → Device Preferences → Screen saver. Some Google TV and Fire OS devices block third-party screen saver selection.",13,SUB);
    help.setPadding(6,10,0,4);panel.addView(help);
-   TextView signature=text("© Velthon Design & Development",13,GOLD);signature.setGravity(Gravity.CENTER);panel.addView(signature);
+   TextView signature=text("© Velthon Design & Development  •  SVD (1865) and KJV (1769): public domain  •  Music: original",13,GOLD);signature.setGravity(Gravity.CENTER);panel.addView(signature);
    prefs.edit()
      .putInt("interval",Integer.parseInt(prefs.getString("interval_choice","15")))
      .putInt("style",Integer.parseInt(prefs.getString("style_choice","0")))
