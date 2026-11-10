@@ -16,3 +16,8 @@ The Android TV app builds using the GitHub Actions workflow once its Android sou
 - Android TV / Fire TV: APK
 - Samsung Tizen: WGT (must be signed appropriately)
 - LG webOS: IPK
+
+## Build validation
+This branch runs an APK compilation check in GitHub Actions.
+
+APK build revalidation after SDK setup fix.
