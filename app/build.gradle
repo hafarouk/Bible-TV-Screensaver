@@ -6,7 +6,7 @@ android {
         applicationId 'com.velthon.bibletv'
         minSdk 23
         targetSdk 28
-        versionCode 6
-        versionName '1.5-test'
+        versionCode 7
+        versionName '1.6-gif-scenes'
     }
 }
