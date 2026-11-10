@@ -16,3 +16,6 @@ The Android TV app builds using the GitHub Actions workflow once its Android sou
 - Android TV / Fire TV: APK
 - Samsung Tizen: WGT (must be signed appropriately)
 - LG webOS: IPK
+
+## Version 1.4 — page-turn verification
+TV setting: Page turn (3D screen turn approximation), Soft fade, None. Verify image, verse cooldown, original logo, and original ambient audio.
