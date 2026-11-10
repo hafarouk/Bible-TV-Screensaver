@@ -1,7 +1,6 @@
 package com.velthon.bibletv;
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Build;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -14,34 +13,75 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+/** A D-pad accessible two-column TV settings layout. Choices are visible inline, not hidden in a cycling button. */
 public class MainActivity extends Activity {
  private SharedPreferences prefs;
  private LinearLayout panel;
- private TextView summary;
- private int gold=0xffffd16b;
- private TextView text(String s,int sz,int color){TextView t=new TextView(this);t.setText(s);t.setTextSize(sz);t.setTextColor(color);t.setGravity(Gravity.CENTER);t.setPadding(12,8,12,8);return t;}
- private void action(String s,Runnable run){Button b=new Button(this);b.setText(s);b.setTextSize(17);b.setAllCaps(false);b.setTextColor(Color.WHITE);GradientDrawable bg=new GradientDrawable();bg.setColor(0xff263d53);bg.setCornerRadius(18);bg.setStroke(2,0xffcba74f);b.setBackground(bg);LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,56);p.setMargins(0,5,0,5);panel.addView(b,p);b.setOnClickListener(v->run.run());}
- @Override public void onCreate(Bundle b){super.onCreate(b);prefs=getSharedPreferences("settings",MODE_PRIVATE);
- ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setBackgroundColor(0xff0d1a29);
- LinearLayout outer=new LinearLayout(this);outer.setGravity(Gravity.CENTER);outer.setPadding(18,16,18,22);scroll.addView(outer);
- panel=new LinearLayout(this);panel.setOrientation(LinearLayout.VERTICAL);panel.setGravity(Gravity.CENTER);panel.setPadding(20,10,20,12);outer.addView(panel,new LinearLayout.LayoutParams(720,-2));
- TextView title=text("✝  BIBLE TV  |  الكتاب المقدس",31,gold);title.setTypeface(null,Typeface.BOLD);panel.addView(title);
- TextView sub=text("Beautiful Bible verses • Living biblical artwork",17,0xffc5d2dc);panel.addView(sub);
- summary=text("",15,Color.WHITE);panel.addView(summary);
- action("🌐  Bible language / لغة الكتاب: عربي · English · Both",()->{String x=prefs.getString("lang","ar");prefs.edit().putString("lang",x.equals("ar")?"en":x.equals("en")?"both":"ar").apply();refresh();});
- action("⏱  Change verse: 15 · 30 · 60 · 120 seconds",()->{int n=prefs.getInt("interval",30);prefs.edit().putInt("interval",n==15?30:n==30?60:n==60?120:15).apply();refresh();});
- action("🖼  Scenes: Jesus & Bible · Nature · Mixed",()->{int n=prefs.getInt("style",0);prefs.edit().putInt("style",(n+1)%3).apply();refresh();});
- action("✨  Gentle moving backgrounds: ON / OFF",()->{prefs.edit().putBoolean("motion",!prefs.getBoolean("motion",true)).apply();refresh();});
- action("🎞  Animation speed: Slow · Medium · Faster",()->{int v=prefs.getInt("motion_speed",0);prefs.edit().putInt("motion_speed",(v+1)%3).apply();refresh();});
- action("♫  Soft background music: OFF / ON",()->{prefs.edit().putBoolean("music",!prefs.getBoolean("music",false)).apply();refresh();});
- action("♫  Music volume: 10 · 25 · 40 · 60%",()->{int v=prefs.getInt("music_volume",25);prefs.edit().putInt("music_volume",v==10?25:v==25?40:v==40?60:10).apply();refresh();});
- action("▶  PREVIEW SCREENSAVER NOW",()->startActivity(new Intent(this,PreviewActivity.class)));
- action("⚙  SELECT AS TV SCREENSAVER",()->openTvSettings());
- TextView note=text("For Android TV, choose Bible TV in your TV's Screen saver / Ambient settings if supported. Google TV and Fire OS may restrict external screensavers.",14,0xffa9bac8);panel.addView(note);
- panel.addView(text("© Velthon Design & Development",15,gold));setContentView(scroll);refresh();
+ private final int BG=0xff101b2b, GOLD=0xffffc828, WHITE=0xfff8f8f8, SUB=0xffadbac9;
+
+ @Override public void onCreate(Bundle b) {
+  super.onCreate(b);prefs=getSharedPreferences("settings",MODE_PRIVATE);
+  ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setBackgroundColor(BG);
+  panel=new LinearLayout(this);panel.setPadding(26,18,26,20);panel.setOrientation(LinearLayout.VERTICAL);
+  scroll.addView(panel);setContentView(scroll);render();
  }
- private void refresh(){String l=prefs.getString("lang","ar");String ls=l.equals("ar")?"العربية":l.equals("en")?"English":"Arabic + English";String st=new String[]{"Biblical scenes","Nature","Mixed"}[prefs.getInt("style",0)];summary.setText("LANGUAGE  "+ls+"    •    VERSE  "+prefs.getInt("interval",30)+" sec\nIMAGERY  "+st+"    •    ANIMATION  "+(prefs.getBoolean("motion",true)?"ON":"OFF")+"    •    MUSIC "+(prefs.getBoolean("music",false)?"ON "+prefs.getInt("music_volume",25)+"%":"OFF"));}
- private void openTvSettings(){String[] actions={ "android.settings.DREAM_SETTINGS",Settings.ACTION_DISPLAY_SETTINGS,Settings.ACTION_SETTINGS};for(String a:actions){try{Intent i=new Intent(a);if(i.resolveActivity(getPackageManager())!=null){startActivity(i);return;}}catch(Exception ignored){}}
- new android.app.AlertDialog.Builder(this).setTitle("TV screensaver settings").setMessage("This TV did not expose a screen saver settings page. Open TV Settings → Device Preferences → Screen saver / Ambient Mode. Some Google TV and Fire TV models block third-party screensavers even when the app is installed.").setPositiveButton("OK",null).show();
+ private TextView text(String s,int size,int colour){TextView t=new TextView(this);t.setText(s);t.setTextSize(size);t.setTextColor(colour);t.setGravity(Gravity.CENTER_VERTICAL);return t;}
+ private GradientDrawable bg(boolean selected,boolean focus){
+   GradientDrawable d=new GradientDrawable();d.setColor(selected?0xff725417:focus?0xff244963:0xff203145);
+   d.setStroke(focus?3:1,selected||focus?GOLD:0xff536478);d.setCornerRadius(12);return d;
+ }
+ private void row(String label, String key, String[] choices, String[] values, String def){
+   LinearLayout line=new LinearLayout(this);line.setOrientation(LinearLayout.HORIZONTAL);line.setGravity(Gravity.CENTER_VERTICAL);
+   LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,58);lp.setMargins(0,3,0,3);panel.addView(line,lp);
+   TextView t=text(label,17,WHITE);t.setTypeface(null,Typeface.BOLD);
+   line.addView(t,new LinearLayout.LayoutParams(250,-1));
+   LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.HORIZONTAL);
+   line.addView(controls,new LinearLayout.LayoutParams(0,-1,1));
+   String current=prefs.getString(key,def);
+   for(int i=0;i<choices.length;i++){
+     final String choice=values[i];final boolean selected=choice.equals(current);
+     Button bt=new Button(this);bt.setText(choices[i]);bt.setTextSize(15);bt.setAllCaps(false);
+     bt.setTextColor(WHITE);bt.setPadding(2,0,2,0);bt.setBackground(bg(selected,false));
+     LinearLayout.LayoutParams bp=new LinearLayout.LayoutParams(0,48,1);bp.setMargins(3,3,3,3);controls.addView(bt,bp);
+     bt.setOnFocusChangeListener((v,focused)->bt.setBackground(bg(choice.equals(prefs.getString(key,def)),focused)));
+     bt.setOnClickListener(v->{prefs.edit().putString(key,choice).apply();render();});
+   }
+ }
+ private void action(String label,Runnable r){
+   Button b=new Button(this);b.setText(label);b.setTextSize(17);b.setTextColor(WHITE);b.setAllCaps(false);
+   b.setBackground(bg(false,false));LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,54);p.setMargins(0,7,0,0);panel.addView(b,p);
+   b.setOnClickListener(v->r.run());b.setOnFocusChangeListener((v,f)->b.setBackground(bg(false,f)));
+ }
+ private void render(){
+   panel.removeAllViews();
+   TextView title=text("✝  BIBLE TV   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);panel.addView(title);
+   TextView sub=text("Screensaver settings  •  Select directly within each row using your remote",14,SUB);sub.setPadding(0,0,0,8);panel.addView(sub);
+   row("Language / اللغة","lang",new String[]{"العربية","English","Both"},new String[]{"ar","en","both"},"ar");
+   row("Verse duration","interval_choice",new String[]{"15 sec","30 sec","60 sec","120 sec"},new String[]{"15","30","60","120"},"15");
+   row("Background scenes","style_choice",new String[]{"Jesus & Bible","Nature","Mixed"},new String[]{"0","1","2"},"0");
+   row("Picture movement","motion_choice",new String[]{"On","Off"},new String[]{"true","false"},"true");
+   row("Animation speed","motion_speed_choice",new String[]{"Slow","Medium","Faster"},new String[]{"0","1","2"},"0");
+   row("Background music","music_choice",new String[]{"Off","On"},new String[]{"false","true"},"false");
+   row("Music volume","music_volume_choice",new String[]{"10%","25%","40%","60%"},new String[]{"10","25","40","60"},"10");
+   action("▶   Preview Bible TV screensaver",()->startActivity(new Intent(this,PreviewActivity.class)));
+   action("⚙   Open TV screensaver selection",this::openTvSettings);
+   TextView help=text("Android TV: Settings → Device Preferences → Screen saver. Some Google TV and Fire OS devices block third-party screen saver selection.",13,SUB);
+   help.setPadding(6,10,0,4);panel.addView(help);
+   TextView signature=text("© Velthon Design & Development",13,GOLD);signature.setGravity(Gravity.CENTER);panel.addView(signature);
+   prefs.edit()
+     .putInt("interval",Integer.parseInt(prefs.getString("interval_choice","15")))
+     .putInt("style",Integer.parseInt(prefs.getString("style_choice","0")))
+     .putBoolean("motion",Boolean.parseBoolean(prefs.getString("motion_choice","true")))
+     .putInt("motion_speed",Integer.parseInt(prefs.getString("motion_speed_choice","0")))
+     .putBoolean("music",Boolean.parseBoolean(prefs.getString("music_choice","false")))
+     .putInt("music_volume",Integer.parseInt(prefs.getString("music_volume_choice","10")))
+     .apply();
+ }
+ private void openTvSettings(){
+   try {Intent i=new Intent("android.settings.DREAM_SETTINGS");i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);startActivity(i);return;}catch(Exception ignored){}
+   new android.app.AlertDialog.Builder(this).setTitle("TV screensaver settings unavailable")
+    .setMessage("Your TV does not expose the Android screen saver selection page to apps. Please check your TV's own Settings → Device Preferences → Screen saver. Manufacturer restrictions cannot be bypassed through this button.")
+    .setPositiveButton("OK",null).show();
  }
 }
