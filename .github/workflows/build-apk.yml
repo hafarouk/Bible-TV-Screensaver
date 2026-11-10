@@ -23,6 +23,10 @@ jobs:
           gradle-version: '8.9'
       - name: Bundle biblical illustrations for offline screensaver
         run: python3 scripts/download_artwork.py
+      - name: Bundle public-domain Arabic and English Bible
+        run: python3 scripts/build_verse_library.py
+      - name: Bundle exact Velthon branding and original soft ambient soundtrack
+        run: python3 scripts/prepare_media.py
       - run: gradle :app:assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
