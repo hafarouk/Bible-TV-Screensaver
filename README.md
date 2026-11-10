@@ -16,3 +16,9 @@ The Android TV app builds using the GitHub Actions workflow once its Android sou
 - Android TV / Fire TV: APK
 - Samsung Tizen: WGT (must be signed appropriately)
 - LG webOS: IPK
+
+## v1.3 TV feedback fixes
+- Offline biblical artwork bundled at build time (build must fail if files not found)
+- Same-row D-pad-selectable settings
+- Clear notice on screen saver system-settings restrictions
+- Softer opt-in ambient soundtrack
