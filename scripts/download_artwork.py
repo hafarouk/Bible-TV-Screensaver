@@ -8,7 +8,7 @@ files=[
  ("shepherd","Brooklyn Museum - The Good Shepherd (Le bon pasteur) - James Tissot - overall.jpg"),
  ("storm","Brooklyn Museum - Jesus Stilling the Tempest (Jésus calmant la tempête) - James Tissot - overall.jpg"),
  ("welcome","Brooklyn Museum - Suffer the Little Children to Come unto Me (Laisser venir à moi les petits enfants) - James Tissot.jpg"),
- ("rest","Brooklyn Museum - Jesus Sleeping During the Tempest (Jésus dormant pendant la tempête) - James Tissot - overall.jpg"),
+
 ]
 folder=pathlib.Path("app/src/main/res/drawable-nodpi");folder.mkdir(parents=True,exist_ok=True)
 for output,name in files:
