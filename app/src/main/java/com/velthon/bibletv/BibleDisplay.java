@@ -44,7 +44,7 @@ public class BibleDisplay extends FrameLayout {
  private static final long ONE_HOUR_MS=3600000L;
  // Public-domain artwork from Wikimedia Commons. Loaded once and cached locally for repeat/offline viewing.
  // Real pictures are packaged offline during the APK build, so no network is needed.
- private static final int[] ART={R.drawable.shepherd,R.drawable.storm,R.drawable.welcome,R.drawable.shepherd};
+ private static final int[] ART={R.drawable.shepherd,R.drawable.storm,R.drawable.welcome,R.drawable.scene_sunrise,R.drawable.scene_ocean,R.drawable.scene_mountain,R.drawable.scene_garden,R.drawable.scene_stars};
  private static final String[][] FALLBACK_VERSES={
  {"الرَّبُّ رَاعِيَّ فَلاَ يُعْوِزُنِي شَيْءٌ.","The LORD is my shepherd; I shall not want.","مزمور ٢٣:١ • Psalm 23:1"},
  {"لاَ يَضْطَرِبْ قَلْبُكُمْ. أَنْتُمْ تُؤْمِنُونَ بِاللهِ فَآمِنُوا بِي.","Let not your heart be troubled: ye believe in God, believe also in me.","يوحنا ١٤:١ • John 14:1"},
@@ -60,27 +60,13 @@ public class BibleDisplay extends FrameLayout {
  picture=new ImageView(c);picture.setScaleType(ImageView.ScaleType.CENTER_CROP);addView(picture,new LayoutParams(-1,-1));
  View shade=new View(c);shade.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{0x66000000,0x33000000,0xdd050c17}));addView(shade,new LayoutParams(-1,-1));
  LinearLayout card=new LinearLayout(c);card.setGravity(Gravity.CENTER);card.setOrientation(LinearLayout.VERTICAL);card.setPadding(40,25,40,25);addView(card,new LayoutParams(-1,-1));
- TextView mark=new TextView(c);mark.setText("✝  BIBLE TV");mark.setTextColor(0xffffd68a);mark.setTextSize(24);mark.setGravity(Gravity.CENTER);card.addView(mark);
+
  verse=new TextView(c);verse.setGravity(Gravity.CENTER);verse.setTextDirection(View.TEXT_DIRECTION_FIRST_STRONG);verse.setTextColor(Color.WHITE);verse.setTextSize(37);verse.setTypeface(Typeface.DEFAULT,Typeface.BOLD);verse.setShadowLayer(8,2,3,Color.BLACK);verse.setPadding(10,22,10,22);card.addView(verse);
  reference=new TextView(c);reference.setGravity(Gravity.CENTER);reference.setTextColor(0xffffdfa2);reference.setTextSize(22);reference.setShadowLayer(5,2,2,Color.BLACK);card.addView(reference);
  LinearLayout footer=new LinearLayout(c);footer.setGravity(Gravity.CENTER);footer.setOrientation(LinearLayout.HORIZONTAL);
- ImageView velthon=new ImageView(c);velthon.setImageResource(R.drawable.velthon_original);velthon.setScaleType(ImageView.ScaleType.FIT_CENTER);
- LinearLayout.LayoutParams logoParams=new LinearLayout.LayoutParams(32,32);logoParams.rightMargin=8;footer.addView(velthon,logoParams);
- caption=new TextView(c);caption.setText("Developed by VELTHON Design & Development");caption.setTextColor(0xffe8e0d0);caption.setTextSize(13);caption.setShadowLayer(4,1,2,Color.BLACK);caption.setGravity(Gravity.CENTER_VERTICAL);footer.addView(caption);
- LayoutParams cp=new LayoutParams(-1,42,Gravity.BOTTOM);cp.bottomMargin=12;addView(footer,cp);
- // A small animated scene window that stays inside safe TV overscan margins.
- FrameLayout mini=new FrameLayout(c);
- GradientDrawable frame=new GradientDrawable();frame.setColor(0xdd0a1828);frame.setCornerRadius(16);frame.setStroke(2,0xffd1a65b);
- mini.setBackground(frame);mini.setPadding(5,5,5,5);
- FrameLayout.LayoutParams miniParams=new FrameLayout.LayoutParams(258,166,Gravity.BOTTOM|Gravity.LEFT);
- miniParams.setMargins(35,0,0,35);addView(mini,miniParams);
- sceneLoop=new SceneLoopView(c);
- mini.addView(sceneLoop,new FrameLayout.LayoutParams(-1,-1));
- sceneTag=new TextView(c);sceneTag.setTextSize(12);sceneTag.setTextColor(0xffffffff);
- sceneTag.setGravity(Gravity.CENTER);sceneTag.setBackgroundColor(0xb8091727);
- FrameLayout.LayoutParams tagP=new FrameLayout.LayoutParams(-1,28,Gravity.BOTTOM);
- mini.addView(sceneTag,tagP);
 
+ caption=new TextView(c);caption.setText("By: VELTHON Design & Development");caption.setTextColor(0xffe8e0d0);caption.setTextSize(13);caption.setShadowLayer(4,1,2,Color.BLACK);caption.setGravity(Gravity.CENTER_VERTICAL);footer.addView(caption);
+ LayoutParams cp=new LayoutParams(-1,42,Gravity.BOTTOM);cp.bottomMargin=12;addView(footer,cp);
  muteButton=new TextView(c);
  muteButton.setTextSize(23);muteButton.setGravity(Gravity.CENTER);
  muteButton.setTextColor(0xffffffff);muteButton.setFocusable(true);muteButton.setClickable(true);
@@ -129,8 +115,13 @@ public class BibleDisplay extends FrameLayout {
  else selectedScene="shepherd";
  // Keep the verse-matched scene independent of the background-style preference.
  int photo=selectedScene.equals("storm")?1:selectedScene.equals("welcome")?2:0;
- sceneLoop.setScene(selectedScene);
- sceneTag.setText(selectedScene.equals("storm")?"FAITH THROUGH STORMS":selectedScene.equals("welcome")?"THE LOVE OF CHRIST":"THE GOOD SHEPHERD");
+ if(en.contains("light")||en.contains("morning")||en.contains("sun"))photo=3;
+ else if(en.contains("sea")||en.contains("water")||en.contains("river"))photo=4;
+ else if(en.contains("mountain")||en.contains("strength")||en.contains("rock"))photo=5;
+ else if(en.contains("flower")||en.contains("garden")||en.contains("grow"))photo=6;
+ else if(en.contains("heaven")||en.contains("star")||en.contains("night"))photo=7;
+ else if(photo==0 && !en.contains("shepherd") && !en.contains("sheep"))photo=3+Math.abs(index%5);
+ 
  picture.animate().cancel();
  picture.setImageResource(ART[photo]);
  picture.setAlpha(0f);picture.animate().alpha(1f).setDuration(850).start();
