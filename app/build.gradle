@@ -6,7 +6,7 @@ android {
         applicationId 'com.velthon.bibletv'
         minSdk 23
         targetSdk 28
-        versionCode 10
-        versionName '1.9-animated-library'
+        versionCode 11
+        versionName '1.10-100-animated-scenes'
     }
 }
