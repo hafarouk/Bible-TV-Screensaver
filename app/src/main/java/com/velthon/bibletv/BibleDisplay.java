@@ -88,7 +88,7 @@ public class BibleDisplay extends FrameLayout {
  private void updateMuteIcon(){
    if(muteButton==null)return;
    boolean disabled="off".equals(prefs.getString("music_track","off"));
-   muteButton.setText(disabled||temporaryMuted?"♩̸":"♫");
+   muteButton.setText(disabled||temporaryMuted?"🔇":"🔊");
    muteButton.setContentDescription(disabled?"Music is turned off in settings":temporaryMuted?"Unmute music":"Mute music");
    muteButton.setVisibility(disabled?View.GONE:View.VISIBLE);
  }
