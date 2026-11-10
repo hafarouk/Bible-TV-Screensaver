@@ -96,7 +96,7 @@ public class BibleDisplay extends FrameLayout {
  public void start(){running=true;temporaryMuted=false;applyMusic();updateMuteIcon();next();}
  public void toggleMute(){temporaryMuted=!temporaryMuted;applyMusic();updateMuteIcon();}
  private void applyMusic(){
-   String track=prefs.getString("music_track","off");
+   String track=prefs.getString("music_track","piano");
    if(!running||temporaryMuted||"off".equals(track)){music.stop();return;}
    music.start(getContext(),prefs.getInt("music_volume",10),track);
  }
