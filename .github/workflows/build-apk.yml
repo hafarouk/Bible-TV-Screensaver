@@ -23,10 +23,10 @@ jobs:
           gradle-version: '8.9'
       - name: Bundle biblical illustrations for offline screensaver
         run: python3 scripts/download_artwork.py
-      - name: Create original animated scene loops from public-domain paintings
+      - name: Create original full-screen verse backgrounds
         run: |
           python3 -m pip install --quiet Pillow
-          python3 scripts/create_scene_loops.py
+          python3 scripts/create_original_scenes.py
       - name: Bundle public-domain Arabic and English Bible
         run: python3 scripts/build_verse_library.py
       - name: Bundle exact Velthon branding and original soft ambient soundtrack
