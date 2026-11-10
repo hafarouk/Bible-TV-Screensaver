@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
    ImageView originalLogo=new ImageView(this);originalLogo.setImageResource(R.drawable.velthon_original);originalLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
    LinearLayout.LayoutParams originalParams=new LinearLayout.LayoutParams(43,44);originalParams.rightMargin=14;
    titleRow.addView(originalLogo,originalParams);
-   TextView title=text("✝  BIBLE TV v1.6   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
+   TextView title=text("✝  BIBLE TV v1.7   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
    panel.addView(titleRow);
    TextView sub=text("Screensaver settings  •  Select directly within each row using your remote",14,SUB);sub.setPadding(0,0,0,8);panel.addView(sub);
    row("Language / اللغة","lang",new String[]{"العربية","English","Both"},new String[]{"ar","en","both"},"ar");
@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
    row("Animation speed","motion_speed_choice",new String[]{"Slow","Medium","Faster"},new String[]{"0","1","2"},"0");
    row("Background music","music_track",new String[]{"Off","Soft Piano","Gentle Strings","Peaceful Ambient"},new String[]{"off","piano","strings","ambient"},"piano");
    row("Music volume","music_volume_choice",new String[]{"15%","25%","35%","50%"},new String[]{"15","25","35","50"},"25");
-   action("♫  Preview selected music (tap again to stop)",()->{
+   action("♫  Preview selected music",()->{
       String choice=prefs.getString("music_track","piano");
       if("off".equals(choice)){previewMusic.stop();new android.app.AlertDialog.Builder(this).setMessage("Select a music option first.").setPositiveButton("OK",null).show();}
       else {previewMusic.start(this,Integer.parseInt(prefs.getString("music_volume_choice","25")),choice);android.widget.Toast.makeText(this,"Now playing "+choice+" • adjust TV volume to hear",android.widget.Toast.LENGTH_LONG).show();}
@@ -82,14 +82,14 @@ public class MainActivity extends Activity {
    action("⚙   Open TV screensaver selection",this::openTvSettings);
    TextView help=text("Android TV: Settings → Device Preferences → Screen saver. Some Google TV and Fire OS devices block third-party screen saver selection.",13,SUB);
    help.setPadding(6,10,0,4);panel.addView(help);
-   TextView signature=text("© Velthon Design & Development  •  SVD (1865) and KJV (1769): public domain  •  Music: original",13,GOLD);signature.setGravity(Gravity.CENTER);panel.addView(signature);
+   TextView signature=text("Developed by VELTHON Design & Development  •  SVD (1865) and KJV (1769): public domain  •  Music: original",13,GOLD);signature.setGravity(Gravity.CENTER);panel.addView(signature);
    prefs.edit()
      .putInt("interval",Integer.parseInt(prefs.getString("interval_choice","15")))
      .putInt("style",Integer.parseInt(prefs.getString("style_choice","0")))
      .putBoolean("motion",Boolean.parseBoolean(prefs.getString("motion_choice","true")))
      .putInt("motion_speed",Integer.parseInt(prefs.getString("motion_speed_choice","0")))
      .putBoolean("music",!"off".equals(prefs.getString("music_track","off")) )
-     .putInt("music_volume",Integer.parseInt(prefs.getString("music_volume_choice","10")))
+     .putInt("music_volume",Integer.parseInt(prefs.getString("music_volume_choice","25")))
      .apply();
  }
  private void openTvSettings(){
