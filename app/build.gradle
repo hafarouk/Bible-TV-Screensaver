@@ -6,7 +6,7 @@ android {
         applicationId 'com.velthon.bibletv'
         minSdk 23
         targetSdk 28
-        versionCode 8
-        versionName '1.7-velthon-footer'
+        versionCode 9
+        versionName '1.8-fullscreen-scenes'
     }
 }
