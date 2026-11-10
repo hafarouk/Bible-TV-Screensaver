@@ -5,7 +5,7 @@ Output: Android app assets bible_verses.json.
 """
 import json, pathlib, urllib.request
 BASE="https://raw.githubusercontent.com/midvash/bible-data/main/versions"
-BOOKS=["Psalms","Proverbs","Matthew","Luke","John","Romans","Philippians","Isaiah"]
+BOOKS=["Ps","Prov","Matt","Luke","John","Rom","Phil","Isa"]
 # Verified OSIS slugs may differ by source; fail build if any download fails.
 def fetch(language,version,book):
     url=f"{BASE}/{language}/{version}/books/{book}.json"
