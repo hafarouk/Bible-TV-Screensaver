@@ -32,12 +32,15 @@ public class MainActivity extends Activity {
  action("⏱  Change verse: 15 · 30 · 60 · 120 seconds",()->{int n=prefs.getInt("interval",30);prefs.edit().putInt("interval",n==15?30:n==30?60:n==60?120:15).apply();refresh();});
  action("🖼  Scenes: Jesus & Bible · Nature · Mixed",()->{int n=prefs.getInt("style",0);prefs.edit().putInt("style",(n+1)%3).apply();refresh();});
  action("✨  Gentle moving backgrounds: ON / OFF",()->{prefs.edit().putBoolean("motion",!prefs.getBoolean("motion",true)).apply();refresh();});
+ action("🎞  Animation speed: Slow · Medium · Faster",()->{int v=prefs.getInt("motion_speed",0);prefs.edit().putInt("motion_speed",(v+1)%3).apply();refresh();});
+ action("♫  Soft background music: OFF / ON",()->{prefs.edit().putBoolean("music",!prefs.getBoolean("music",false)).apply();refresh();});
+ action("♫  Music volume: 10 · 25 · 40 · 60%",()->{int v=prefs.getInt("music_volume",25);prefs.edit().putInt("music_volume",v==10?25:v==25?40:v==40?60:10).apply();refresh();});
  action("▶  PREVIEW SCREENSAVER NOW",()->startActivity(new Intent(this,PreviewActivity.class)));
  action("⚙  SELECT AS TV SCREENSAVER",()->openTvSettings());
  TextView note=text("For Android TV, choose Bible TV in your TV's Screen saver / Ambient settings if supported. Google TV and Fire OS may restrict external screensavers.",14,0xffa9bac8);panel.addView(note);
  panel.addView(text("© Velthon Design & Development",15,gold));setContentView(scroll);refresh();
  }
- private void refresh(){String l=prefs.getString("lang","ar");String ls=l.equals("ar")?"العربية":l.equals("en")?"English":"Arabic + English";String st=new String[]{"Biblical scenes","Nature","Mixed"}[prefs.getInt("style",0)];summary.setText("LANGUAGE  "+ls+"    •    VERSE  "+prefs.getInt("interval",30)+" sec\nIMAGERY  "+st+"    •    ANIMATION  "+(prefs.getBoolean("motion",true)?"ON":"OFF"));}
+ private void refresh(){String l=prefs.getString("lang","ar");String ls=l.equals("ar")?"العربية":l.equals("en")?"English":"Arabic + English";String st=new String[]{"Biblical scenes","Nature","Mixed"}[prefs.getInt("style",0)];summary.setText("LANGUAGE  "+ls+"    •    VERSE  "+prefs.getInt("interval",30)+" sec\nIMAGERY  "+st+"    •    ANIMATION  "+(prefs.getBoolean("motion",true)?"ON":"OFF")+"    •    MUSIC "+(prefs.getBoolean("music",false)?"ON "+prefs.getInt("music_volume",25)+"%":"OFF"));}
  private void openTvSettings(){String[] actions={ "android.settings.DREAM_SETTINGS",Settings.ACTION_DISPLAY_SETTINGS,Settings.ACTION_SETTINGS};for(String a:actions){try{Intent i=new Intent(a);if(i.resolveActivity(getPackageManager())!=null){startActivity(i);return;}}catch(Exception ignored){}}
  new android.app.AlertDialog.Builder(this).setTitle("TV screensaver settings").setMessage("This TV did not expose a screen saver settings page. Open TV Settings → Device Preferences → Screen saver / Ambient Mode. Some Google TV and Fire TV models block third-party screensavers even when the app is installed.").setPositiveButton("OK",null).show();
  }
