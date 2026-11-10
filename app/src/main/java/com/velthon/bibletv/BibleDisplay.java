@@ -43,7 +43,7 @@ public class BibleDisplay extends FrameLayout {
  private static final long ONE_HOUR_MS=3600000L;
  // Public-domain artwork from Wikimedia Commons. Loaded once and cached locally for repeat/offline viewing.
  // Real pictures are packaged offline during the APK build, so no network is needed.
- private static final int[] ART={R.drawable.shepherd,R.drawable.storm,R.drawable.welcome,R.drawable.rest};
+ private static final int[] ART={R.drawable.shepherd,R.drawable.storm,R.drawable.welcome,R.drawable.shepherd};
  private static final String[][] FALLBACK_VERSES={
  {"الرَّبُّ رَاعِيَّ فَلاَ يُعْوِزُنِي شَيْءٌ.","The LORD is my shepherd; I shall not want.","مزمور ٢٣:١ • Psalm 23:1"},
  {"لاَ يَضْطَرِبْ قَلْبُكُمْ. أَنْتُمْ تُؤْمِنُونَ بِاللهِ فَآمِنُوا بِي.","Let not your heart be troubled: ye believe in God, believe also in me.","يوحنا ١٤:١ • John 14:1"},
