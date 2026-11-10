@@ -37,6 +37,7 @@ public class BibleDisplay extends FrameLayout {
  private SceneLoopView sceneLoop;
  private TextView sceneTag;
  private int mediaIndex=-1;
+ private JSONArray artworkManifest;
  private TextView muteButton;
  private boolean temporaryMuted=false;
  private String[][] verses;
@@ -57,9 +58,13 @@ public class BibleDisplay extends FrameLayout {
  {"بِالسُّكُونِ وَالطُّمَأْنِينَةِ تَكُونُ قُوَّتُكُمْ.","In quietness and in confidence shall be your strength.","إشعياء ٣٠:١٥ • Isaiah 30:15"}
  };
  public BibleDisplay(Context c){super(c);prefs=c.getSharedPreferences("settings",Context.MODE_PRIVATE);verses=loadVerses(c);
+ try(InputStream art=c.getAssets().open("jesus_art_manifest.json");ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
+ byte[] chunk=new byte[4096];int count;while((count=art.read(chunk))!=-1)bytes.write(chunk,0,count);
+ artworkManifest=new JSONArray(bytes.toString("UTF-8"));
+ }catch(Exception e){android.util.Log.e("BibleTV","Art library unavailable",e);artworkManifest=new JSONArray();}
  fallback=new View(c);fallback.setBackground(new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{0xff0b1b31,0xff435971,0xffc38b53}));addView(fallback,new LayoutParams(-1,-1));
  picture=new ImageView(c);picture.setScaleType(ImageView.ScaleType.CENTER_CROP);addView(picture,new LayoutParams(-1,-1));
- sceneLoop=new SceneLoopView(c);addView(sceneLoop,new LayoutParams(-1,-1));
+
  View shade=new View(c);shade.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{0x66000000,0x33000000,0xdd050c17}));addView(shade,new LayoutParams(-1,-1));
  LinearLayout card=new LinearLayout(c);card.setGravity(Gravity.CENTER);card.setOrientation(LinearLayout.VERTICAL);card.setPadding(40,25,40,25);addView(card,new LayoutParams(-1,-1));
 
@@ -94,7 +99,7 @@ public class BibleDisplay extends FrameLayout {
    muteButton.setContentDescription(disabled?"Music is turned off in settings":temporaryMuted?"Unmute music":"Mute music");
    muteButton.setVisibility(disabled?View.GONE:View.VISIBLE);
  }
- public void stop(){running=false;sceneLoop.setVisibility(View.GONE);music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}}
+ public void stop(){running=false;music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}}
  public void next(){handler.removeCallbacksAndMessages(null);if(!running)return;int chosen=chooseIndex();
  if(chosen<0){handler.postDelayed(()->next(),1000L);return;}
  // Capture the previous screen before changing its verse, for an animated Bible page turn.
@@ -124,14 +129,26 @@ public class BibleDisplay extends FrameLayout {
  else if(en.contains("heaven")||en.contains("star")||en.contains("night"))photo=7;
  else if(photo==0 && !en.contains("shepherd") && !en.contains("sheep"))photo=3+Math.abs(index%5);
  
- String mode=prefs.getString("media_mode","animated");
- boolean animated=!"photos".equals(mode);
- sceneLoop.setVisibility(animated?View.VISIBLE:View.GONE);
- picture.setVisibility(animated?View.GONE:View.VISIBLE);
- if(animated){int nextMedia;do{nextMedia=random.nextInt(100);}while(nextMedia==mediaIndex);mediaIndex=nextMedia;sceneLoop.setScene(String.format(java.util.Locale.US,"motion_%02d",mediaIndex));}
+ // Display only static, licensed Jesus artwork. No GIF player or artificial movement.
  picture.animate().cancel();
- picture.setImageResource(ART[photo]);
- if(!animated){picture.setAlpha(0f);picture.animate().alpha(1f).setDuration(850).start();animatePicture();}
+ if(motion!=null){motion.cancel();motion=null;}
+ picture.setScaleX(1f);picture.setScaleY(1f);picture.setTranslationX(0);picture.setTranslationY(0);
+ picture.setVisibility(View.VISIBLE);picture.setAlpha(1f);
+ try{
+   if(artworkManifest.length()>0){
+     int nextMedia=random.nextInt(artworkManifest.length());
+     if(artworkManifest.length()>1 && nextMedia==mediaIndex)nextMedia=(nextMedia+1)%artworkManifest.length();
+     mediaIndex=nextMedia;
+     String filename=artworkManifest.getJSONObject(mediaIndex).getString("file");
+     try(InputStream stream=getContext().getAssets().open("jesus_art/"+filename)){
+       android.graphics.BitmapFactory.Options options=new android.graphics.BitmapFactory.Options();
+       options.inPreferredConfig=Bitmap.Config.RGB_565;
+       Bitmap image=BitmapFactory.decodeStream(stream,null,options);
+       if(image==null)throw new IllegalStateException("Invalid artwork "+filename);
+       picture.setImageBitmap(image);
+     }
+   }else picture.setImageResource(ART[photo]);
+ }catch(Exception error){android.util.Log.e("BibleTV","Could not display artwork",error);picture.setImageResource(ART[photo]);}
  if(previousScreen!=null)animateTransition(previousScreen,transition);
  handler.postDelayed(()->next(),Math.max(15,prefs.getInt("interval",30))*1000L);
  }
