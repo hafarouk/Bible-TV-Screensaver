@@ -127,7 +127,7 @@ public class BibleDisplay extends FrameLayout {
  else if(en.contains("storm")||en.contains("tempest")||en.contains("wind")||en.contains("sea")||en.contains("water")||en.contains("fear"))selectedScene="storm";
  else if(en.contains("child")||en.contains("children")||en.contains("come unto")||en.contains("love")||en.contains("peace")||en.contains("heart"))selectedScene="welcome";
  else selectedScene="shepherd";
- if(theme==1 && selectedScene.equals("welcome"))selectedScene="shepherd";
+ // Keep the verse-matched scene independent of the background-style preference.
  int photo=selectedScene.equals("storm")?1:selectedScene.equals("welcome")?2:0;
  sceneLoop.setScene(selectedScene);
  sceneTag.setText(selectedScene.equals("storm")?"FAITH THROUGH STORMS":selectedScene.equals("welcome")?"THE LOVE OF CHRIST":"THE GOOD SHEPHERD");
