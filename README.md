@@ -16,3 +16,6 @@ The Android TV app builds using the GitHub Actions workflow once its Android sou
 - Android TV / Fire TV: APK
 - Samsung Tizen: WGT (must be signed appropriately)
 - LG webOS: IPK
+
+## v1.2 verification
+Optional original synthesised ambient music (off by default), volume setting, animation-speed setting. Bible verse library expansion remains pending.
