@@ -29,10 +29,12 @@ def clean(t):
 seen=set();records=[]
 for term in SEARCHES:
  try:
-  data=query({"action":"query","generator":"search","gsrsearch":term+" filetype:bitmap","gsrnamespace":6,"gsrlimit":12,"prop":"imageinfo","iiprop":"url|extmetadata|size","iiurlwidth":1280,"format":"json"})
+  data=query({"action":"query","generator":"search","gsrsearch":term+" filetype:bitmap","gsrnamespace":6,"gsrlimit":6,"prop":"imageinfo","iiprop":"url|extmetadata|size","iiurlwidth":1280,"format":"json"})
   pages=list(data.get("query",{}).get("pages",{}).values())
+  accepted=0
   for page in pages:
-   if len(records)>=65:break
+   if accepted>=2:break
+   if len(records)>=45:break
    info=(page.get("imageinfo") or [{}])[0];meta=info.get("extmetadata",{})
    license_code=clean(meta.get("LicenseShortName",{}).get("value","")).lower()
    usage=clean(meta.get("UsageTerms",{}).get("value","")).lower()
@@ -47,6 +49,7 @@ for term in SEARCHES:
    if img.width<640 or img.height<400:continue
    name="jesus_%03d.jpg"%len(records)
    img.thumbnail((1280,900));img.save(OUT/name,quality=82,optimize=True)
+   accepted+=1
    records.append({"file":name,"title":title,"source":info.get("descriptionurl",""),"license":license_code,"artist":clean(meta.get("Artist",{}).get("value",""))[:160]})
    print(name,title,license_code,flush=True)
    if len(records)>=65:break
