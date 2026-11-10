@@ -19,6 +19,7 @@ import android.widget.ImageView;
 public class MainActivity extends Activity {
  private SharedPreferences prefs;
  private LinearLayout panel;
+ private final AmbientMusic previewMusic=new AmbientMusic();
  private final int BG=0xff101b2b, GOLD=0xffffc828, WHITE=0xfff8f8f8, SUB=0xffadbac9;
 
  @Override public void onCreate(Bundle b) {
@@ -69,8 +70,13 @@ public class MainActivity extends Activity {
    row("Picture movement","motion_choice",new String[]{"On","Off"},new String[]{"true","false"},"true");
    row("Verse transition","transition_choice",new String[]{"Page turn","Soft fade","None"},new String[]{"page","fade","none"},"page");
    row("Animation speed","motion_speed_choice",new String[]{"Slow","Medium","Faster"},new String[]{"0","1","2"},"0");
-   row("Background music","music_choice",new String[]{"Off","On"},new String[]{"false","true"},"false");
-   row("Music volume","music_volume_choice",new String[]{"10%","25%","40%","60%"},new String[]{"10","25","40","60"},"10");
+   row("Background music","music_track",new String[]{"Off","Soft Piano","Gentle Strings","Peaceful Ambient"},new String[]{"off","piano","strings","ambient"},"off");
+   row("Music volume","music_volume_choice",new String[]{"10%","20%","35%","50%"},new String[]{"10","20","35","50"},"10");
+   action("♫  Preview selected music (tap again to stop)",()->{
+      String choice=prefs.getString("music_track","off");
+      if("off".equals(choice)){previewMusic.stop();new android.app.AlertDialog.Builder(this).setMessage("Select a music option first.").setPositiveButton("OK",null).show();}
+      else previewMusic.start(this,Integer.parseInt(prefs.getString("music_volume_choice","10")),choice);
+   });
    action("▶   Preview Bible TV screensaver",()->startActivity(new Intent(this,PreviewActivity.class)));
    action("⚙   Open TV screensaver selection",this::openTvSettings);
    TextView help=text("Android TV: Settings → Device Preferences → Screen saver. Some Google TV and Fire OS devices block third-party screen saver selection.",13,SUB);
@@ -81,7 +87,7 @@ public class MainActivity extends Activity {
      .putInt("style",Integer.parseInt(prefs.getString("style_choice","0")))
      .putBoolean("motion",Boolean.parseBoolean(prefs.getString("motion_choice","true")))
      .putInt("motion_speed",Integer.parseInt(prefs.getString("motion_speed_choice","0")))
-     .putBoolean("music",Boolean.parseBoolean(prefs.getString("music_choice","false")))
+     .putBoolean("music",!"off".equals(prefs.getString("music_track","off")) )
      .putInt("music_volume",Integer.parseInt(prefs.getString("music_volume_choice","10")))
      .apply();
  }
