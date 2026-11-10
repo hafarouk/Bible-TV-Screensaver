@@ -33,7 +33,7 @@ public class BibleDisplay extends FrameLayout {
  private SharedPreferences prefs;private Handler handler=new Handler(Looper.getMainLooper());
  private ImageView picture;private View fallback;private TextView verse,reference,caption;
  private AnimatorSet motion;private int index=-1;private boolean running=false;
- private ImageView turningPage;
+ private View turningPage;
  private SceneLoopView sceneLoop;
  private TextView sceneTag;
  private TextView muteButton;
@@ -166,27 +166,29 @@ public class BibleDisplay extends FrameLayout {
    return chosen;
  }
  private void animateTransition(Bitmap oldScreen,String type){
-   ImageView page=new ImageView(getContext());
-   page.setImageBitmap(oldScreen);
-   page.setScaleType(ImageView.ScaleType.FIT_XY);
-   page.setLayoutParams(new FrameLayout.LayoutParams(-1,-1));
-   addView(page);turningPage=page;
-   page.setPivotX(0f);page.setPivotY(getHeight()/2f);
-   page.setCameraDistance(8000f*getResources().getDisplayMetrics().density);
    if("fade".equals(type)){
-     page.animate().alpha(0f).setDuration(850).setListener(new AnimatorListenerAdapter(){
-       @Override public void onAnimationEnd(Animator a){clearPage(page,oldScreen);}
-       @Override public void onAnimationCancel(Animator a){clearPage(page,oldScreen);}
+     ImageView overlay=new ImageView(getContext());
+     overlay.setImageBitmap(oldScreen);overlay.setScaleType(ImageView.ScaleType.FIT_XY);
+     addView(overlay,new FrameLayout.LayoutParams(-1,-1));turningPage=overlay;
+     overlay.animate().alpha(0f).setDuration(850).setListener(new AnimatorListenerAdapter(){
+       @Override public void onAnimationEnd(Animator a){clearPage(overlay,oldScreen);}
+       @Override public void onAnimationCancel(Animator a){clearPage(overlay,oldScreen);}
      }).start();
-   }else{
-     // A lightweight 3D Bible-page-turn approximation, optimized for low-power Android TVs.
-     page.animate().rotationY(-86f).translationX(-getWidth()*0.03f).alpha(0.08f).setDuration(950).setListener(new AnimatorListenerAdapter(){
-       @Override public void onAnimationEnd(Animator a){clearPage(page,oldScreen);}
-       @Override public void onAnimationCancel(Animator a){clearPage(page,oldScreen);}
-     }).start();
+     return;
    }
+   final PageCurlView page=new PageCurlView(getContext(),oldScreen);
+   addView(page,new FrameLayout.LayoutParams(-1,-1));turningPage=page;
+   android.animation.ValueAnimator curl=android.animation.ValueAnimator.ofFloat(0f,1f);
+   curl.setDuration(1450);
+   curl.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+   curl.addUpdateListener(a->page.setProgress((Float)a.getAnimatedValue()));
+   curl.addListener(new AnimatorListenerAdapter(){
+     @Override public void onAnimationEnd(Animator a){clearPage(page,oldScreen);}
+     @Override public void onAnimationCancel(Animator a){clearPage(page,oldScreen);}
+   });
+   curl.start();
  }
- private void clearPage(ImageView page,Bitmap image){
+ private void clearPage(View page,Bitmap image){
    if(page.getParent()==this)removeView(page);
    if(turningPage==page)turningPage=null;
    if(!image.isRecycled())image.recycle();
