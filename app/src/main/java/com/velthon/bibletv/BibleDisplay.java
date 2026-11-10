@@ -79,7 +79,8 @@ public class BibleDisplay extends FrameLayout {
  private void animatePicture(){if(motion!=null)motion.cancel();picture.setScaleX(1.0f);picture.setScaleY(1.0f);
  if(!prefs.getBoolean("motion",true))return;
  ObjectAnimator x=ObjectAnimator.ofFloat(picture,"scaleX",1.0f,1.16f);ObjectAnimator y=ObjectAnimator.ofFloat(picture,"scaleY",1.0f,1.16f);
- x.setDuration(18000);y.setDuration(18000);x.setRepeatCount(ObjectAnimator.INFINITE);y.setRepeatCount(ObjectAnimator.INFINITE);x.setRepeatMode(ObjectAnimator.REVERSE);y.setRepeatMode(ObjectAnimator.REVERSE);
+ int[] speeds={24000,15000,8000};long duration=speeds[Math.max(0,Math.min(2,prefs.getInt("motion_speed",0)))];
+ x.setDuration(duration);y.setDuration(duration);x.setRepeatCount(ObjectAnimator.INFINITE);y.setRepeatCount(ObjectAnimator.INFINITE);x.setRepeatMode(ObjectAnimator.REVERSE);y.setRepeatMode(ObjectAnimator.REVERSE);
  motion=new AnimatorSet();motion.playTogether(x,y);motion.start();
  }
  private void loadPicture(int num,int expected){new Thread(()->{Bitmap bmp=null;File cache=new File(getContext().getCacheDir(),"biblical_"+num+".jpg");
