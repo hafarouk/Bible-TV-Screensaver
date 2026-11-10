@@ -5,18 +5,21 @@ public class BibleDreamService extends DreamService {
     private BibleDisplay display;
     @Override public void onAttachedToWindow() {
         super.onAttachedToWindow(); setFullscreen(true);
-        // Interactive mode allows D-pad selection of the mute button.
         setInteractive(true); setScreenBright(true);
-        display=new BibleDisplay(this);setContentView(display);
+        display=new BibleDisplay(this);
+        display.setFocusableInTouchMode(true);
+        display.setOnKeyListener((view,key,event)->{
+            if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
+            if(key==KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE||key==KeyEvent.KEYCODE_VOLUME_MUTE){
+                display.toggleMute();return true;
+            }
+            if(key==KeyEvent.KEYCODE_BACK){finish();return true;}
+            return false;
+        });
+        setContentView(display);
+        display.requestFocus();
     }
-    @Override public void onDreamingStarted() { super.onDreamingStarted(); display.start(); }
-    @Override public void onDreamingStopped() { if(display!=null)display.stop(); super.onDreamingStopped(); }
-    @Override public void onDetachedFromWindow() { if(display!=null)display.stop(); super.onDetachedFromWindow(); }
-    @Override public boolean onKeyDown(int key, KeyEvent event) {
-        if(key==KeyEvent.KEYCODE_BACK || key==KeyEvent.KEYCODE_HOME){finish();return true;}
-        if(key==KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE || key==KeyEvent.KEYCODE_MEDIA_MUTE || key==KeyEvent.KEYCODE_M) {
-            if(display!=null)display.toggleMute();return true;
-        }
-        return super.onKeyDown(key,event);
-    }
+    @Override public void onDreamingStarted(){super.onDreamingStarted();display.start();}
+    @Override public void onDreamingStopped(){if(display!=null)display.stop();super.onDreamingStopped();}
+    @Override public void onDetachedFromWindow(){if(display!=null)display.stop();super.onDetachedFromWindow();}
 }
