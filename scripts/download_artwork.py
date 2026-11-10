@@ -5,7 +5,7 @@ Public-domain paintings by James Tissot, Brooklyn Museum / Wikimedia Commons.
 """
 import hashlib, pathlib, urllib.request, urllib.parse, time
 files=[
- ("shepherd","Brooklyn Museum - The Good Shepherd (Le bon pasteur) - James Tissot.jpg"),
+ ("shepherd","Brooklyn Museum - The Good Shepherd (Le bon pasteur) - James Tissot - overall.jpg"),
  ("storm","Brooklyn Museum - Jesus Stilling the Tempest (Jésus calmant la tempête) - James Tissot - overall.jpg"),
  ("welcome","Brooklyn Museum - Suffer the Little Children to Come unto Me (Laisser venir à moi les petits enfants) - James Tissot.jpg"),
  ("rest","Brooklyn Museum - Jesus Sleeping During the Tempest (Jésus dormant pendant la tempête) - James Tissot - overall.jpg"),
@@ -19,7 +19,7 @@ for output,name in files:
     for attempt in range(3):
         try:
             with urllib.request.urlopen(req,timeout=35) as response: data=response.read()
-            if len(data)<10000 or not data.startswith(b"\\xff\\xd8\\xff"):
+            if len(data)<10000 or not data.startswith(bytes([0xff,0xd8,0xff])):
                 raise ValueError("not a valid JPEG: "+str(len(data)))
             target.write_bytes(data)
             print("Bundled",output,len(data),"bytes")
