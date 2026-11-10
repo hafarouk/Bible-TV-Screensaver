@@ -11,7 +11,7 @@ final class AmbientMusic {
  private Thread worker;
  void start(int volume){
    stop();if(volume<=0)return;playing.set(true);
-   final float gain=Math.min(volume,100)/100f*0.07f;
+   final float gain=Math.min(volume,100)/100f*0.035f;
    worker=new Thread(()->{
      Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
      AudioTrack track=null;
@@ -22,13 +22,13 @@ final class AmbientMusic {
         .setTransferMode(AudioTrack.MODE_STREAM).setBufferSizeInBytes(size).build();
        track.play();
        short[] audio=new short[2048];long time=0;
-       double[] notes={174.61,220.0,261.63,196.0};
+       double[] notes={130.81,146.83,174.61,196.00};
        while(playing.get()&&!Thread.currentThread().isInterrupted()){
          for(int i=0;i<audio.length;i++,time++){
            double sec=time/(double)RATE;int chord=(int)(sec/12)%notes.length;
            double root=notes[chord];
-           double smooth=0.55-0.45*Math.cos(2*Math.PI*(sec%12)/12);
-           double wave=0.48*Math.sin(2*Math.PI*root*sec)+0.22*Math.sin(2*Math.PI*root*1.5*sec)+0.12*Math.sin(2*Math.PI*root*2*sec);
+           double smooth=0.32+0.12*Math.sin(2*Math.PI*sec/24);
+           double wave=0.35*Math.sin(2*Math.PI*root*sec)+0.22*Math.sin(2*Math.PI*root*1.25*sec)+0.18*Math.sin(2*Math.PI*root*1.5*sec);
            audio[i]=(short)(wave*gain*smooth*Short.MAX_VALUE);
          }
          track.write(audio,0,audio.length);
