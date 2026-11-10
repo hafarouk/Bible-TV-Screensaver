@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
  private void render(){
    panel.removeAllViews();
    LinearLayout titleRow=new LinearLayout(this);titleRow.setGravity(Gravity.CENTER_VERTICAL);titleRow.setOrientation(LinearLayout.HORIZONTAL);
-   ImageView originalLogo=new ImageView(this);originalLogo.setImageResource(android.R.drawable.ic_menu_gallery);originalLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
+   ImageView originalLogo=new ImageView(this);originalLogo.setImageResource(R.drawable.bible_tv_icon);originalLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
    LinearLayout.LayoutParams originalParams=new LinearLayout.LayoutParams(43,44);originalParams.rightMargin=14;
    titleRow.addView(originalLogo,originalParams);
    TextView title=text("✝  BIBLE TV v1.8   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
