@@ -19,3 +19,5 @@ The Android TV app builds using the GitHub Actions workflow once its Android sou
 
 ## Build validation
 This branch runs an APK compilation check in GitHub Actions.
+
+APK build revalidation after SDK setup fix.
