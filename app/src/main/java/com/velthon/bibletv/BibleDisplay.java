@@ -29,11 +29,8 @@ public class BibleDisplay extends FrameLayout {
  private final AmbientMusic music=new AmbientMusic();
  private static final long ONE_HOUR_MS=3600000L;
  // Public-domain artwork from Wikimedia Commons. Loaded once and cached locally for repeat/offline viewing.
- private static final String[] IMAGES={
- "https://commons.wikimedia.org/wiki/Special:FilePath/GoodShepherdYoungJesus.jpg?width=1024",
- "https://commons.wikimedia.org/wiki/Special:FilePath/Brooklyn_Museum_-_Jesus_Stilling_the_Tempest_(J%C3%A9sus_calmant_la_temp%C3%AAte)_-_James_Tissot_-_overall.jpg?width=1024",
- "https://commons.wikimedia.org/wiki/Special:FilePath/The_Lord_is_my_Good_Shepherd.jpg?width=1024",
- "https://commons.wikimedia.org/wiki/Special:FilePath/Simon_de_Vlieger_-_Calming_the_storm.jpg?width=1024"};
+ // Real pictures are packaged offline during the APK build, so no network is needed.
+ private static final int[] ART={R.drawable.shepherd,R.drawable.storm,R.drawable.welcome,R.drawable.rest};
  private static final String[][] VERSES={
  {"الرَّبُّ رَاعِيَّ فَلاَ يُعْوِزُنِي شَيْءٌ.","The LORD is my shepherd; I shall not want.","مزمور ٢٣:١ • Psalm 23:1"},
  {"لاَ يَضْطَرِبْ قَلْبُكُمْ. أَنْتُمْ تُؤْمِنُونَ بِاللهِ فَآمِنُوا بِي.","Let not your heart be troubled: ye believe in God, believe also in me.","يوحنا ١٤:١ • John 14:1"},
@@ -58,8 +55,12 @@ public class BibleDisplay extends FrameLayout {
  public void stop(){running=false;music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();}
  public void next(){handler.removeCallbacksAndMessages(null);if(!running)return;index=chooseIndex();
  String[] v=VERSES[index];String l=prefs.getString("lang","ar");verse.setText(l.equals("en")?v[1]:l.equals("both")?v[0]+"\n\n"+v[1]:v[0]);reference.setText(v[2]);
- int theme=prefs.getInt("style",0);int photo=(theme==1?index%2+2:index%4);
- picture.setImageDrawable(null);loadPicture(photo,index);animatePicture();
+ int theme=prefs.getInt("style",0);
+ int photo=theme==1? (index%2==0?1:3) : theme==2? (index*3+1)%4 : index%4;
+ picture.animate().cancel();
+ picture.setImageResource(ART[photo]);
+ picture.setAlpha(0f);picture.animate().alpha(1f).setDuration(850).start();
+ animatePicture();
  handler.postDelayed(()->next(),Math.max(15,prefs.getInt("interval",30))*1000L);
  }
  // Persist verse timestamps between sessions to reduce repetition.
@@ -83,12 +84,4 @@ public class BibleDisplay extends FrameLayout {
  x.setDuration(duration);y.setDuration(duration);x.setRepeatCount(ObjectAnimator.INFINITE);y.setRepeatCount(ObjectAnimator.INFINITE);x.setRepeatMode(ObjectAnimator.REVERSE);y.setRepeatMode(ObjectAnimator.REVERSE);
  motion=new AnimatorSet();motion.playTogether(x,y);motion.start();
  }
- private void loadPicture(int num,int expected){new Thread(()->{Bitmap bmp=null;File cache=new File(getContext().getCacheDir(),"biblical_"+num+".jpg");
- try{if(cache.exists())bmp=BitmapFactory.decodeFile(cache.getAbsolutePath());
- if(bmp==null){HttpsURLConnection connection=(HttpsURLConnection)new URL(IMAGES[num]).openConnection();connection.setConnectTimeout(6500);connection.setReadTimeout(8000);connection.setInstanceFollowRedirects(true);connection.setRequestProperty("User-Agent","BibleTVScreensaver/1.1 (Android TV)");
- try(InputStream in=connection.getInputStream();FileOutputStream out=new FileOutputStream(cache)){byte[] b=new byte[8192];int n;while((n=in.read(b))>0)out.write(b,0,n);}
- connection.disconnect();bmp=BitmapFactory.decodeFile(cache.getAbsolutePath());
- }}catch(Exception ignored){}
- Bitmap finalBitmap=bmp;handler.post(()->{if(running&&expected==index&&finalBitmap!=null){picture.setImageBitmap(finalBitmap);picture.setAlpha(0);picture.animate().alpha(1).setDuration(900).start();}});
- }).start();}
 }
