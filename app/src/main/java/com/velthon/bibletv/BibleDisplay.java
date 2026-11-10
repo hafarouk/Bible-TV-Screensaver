@@ -35,6 +35,8 @@ public class BibleDisplay extends FrameLayout {
  private ImageView picture;private View fallback;private TextView verse,reference,caption;
  private AnimatorSet motion;private int index=-1;private boolean running=false;
  private ImageView turningPage;
+ private TextView muteButton;
+ private boolean temporaryMuted=false;
  private String[][] verses;
  private final Random random=new Random();
  private final AmbientMusic music=new AmbientMusic();
@@ -65,8 +67,31 @@ public class BibleDisplay extends FrameLayout {
  verse=new TextView(c);verse.setGravity(Gravity.CENTER);verse.setTextDirection(View.TEXT_DIRECTION_FIRST_STRONG);verse.setTextColor(Color.WHITE);verse.setTextSize(37);verse.setTypeface(Typeface.DEFAULT,Typeface.BOLD);verse.setShadowLayer(8,2,3,Color.BLACK);verse.setPadding(10,22,10,22);card.addView(verse);
  reference=new TextView(c);reference.setGravity(Gravity.CENTER);reference.setTextColor(0xffffdfa2);reference.setTextSize(22);reference.setShadowLayer(5,2,2,Color.BLACK);card.addView(reference);
  caption=new TextView(c);caption.setText("Velthon Design & Development");caption.setTextColor(0xffe8e0d0);caption.setTextSize(12);caption.setGravity(Gravity.CENTER);LayoutParams cp=new LayoutParams(-1,-2,Gravity.BOTTOM);cp.bottomMargin=18;addView(caption,cp);
+ muteButton=new TextView(c);
+ muteButton.setTextSize(23);muteButton.setGravity(Gravity.CENTER);
+ muteButton.setTextColor(0xffffffff);muteButton.setFocusable(true);muteButton.setClickable(true);
+ muteButton.setContentDescription("Mute or unmute background music");
+ GradientDrawable pill=new GradientDrawable();pill.setColor(0x99081422);pill.setCornerRadius(36);pill.setStroke(1,0x77ffffff);
+ muteButton.setBackground(pill);
+ FrameLayout.LayoutParams mp=new FrameLayout.LayoutParams(64,52,Gravity.TOP|Gravity.RIGHT);mp.setMargins(0,22,28,0);
+ addView(muteButton,mp);
+ muteButton.setOnClickListener(v->toggleMute());
+ updateMuteIcon();
  }
- public void start(){running=true;music.start(getContext(),prefs.getInt("music_volume",10),prefs.getString("music_track","off"));next();}
+ public void start(){running=true;temporaryMuted=false;applyMusic();updateMuteIcon();next();}
+ public void toggleMute(){temporaryMuted=!temporaryMuted;applyMusic();updateMuteIcon();}
+ private void applyMusic(){
+   String track=prefs.getString("music_track","off");
+   if(!running||temporaryMuted||"off".equals(track)){music.stop();return;}
+   music.start(getContext(),prefs.getInt("music_volume",10),track);
+ }
+ private void updateMuteIcon(){
+   if(muteButton==null)return;
+   boolean disabled="off".equals(prefs.getString("music_track","off"));
+   muteButton.setText(disabled||temporaryMuted?"♩̸":"♫");
+   muteButton.setContentDescription(disabled?"Music is turned off in settings":temporaryMuted?"Unmute music":"Mute music");
+   muteButton.setVisibility(disabled?View.GONE:View.VISIBLE);
+ }
  public void stop(){running=false;music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}}
  public void next(){handler.removeCallbacksAndMessages(null);if(!running)return;int chosen=chooseIndex();
  if(chosen<0){handler.postDelayed(()->next(),1000L);return;}
