@@ -16,3 +16,6 @@ The Android TV app builds using the GitHub Actions workflow once its Android sou
 - Android TV / Fire TV: APK
 - Samsung Tizen: WGT (must be signed appropriately)
 - LG webOS: IPK
+
+## v1.6 - animated verse-linked scenes
+Offline small animated GIF loops generated exclusively from public-domain paintings; verse-keyword categories shepherd, storm, welcome. TV title shows v1.6 to verify installed package; audio louder and opt-out with settings.
