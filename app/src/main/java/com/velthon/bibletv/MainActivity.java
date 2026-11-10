@@ -62,11 +62,12 @@ public class MainActivity extends Activity {
    ImageView originalLogo=new ImageView(this);originalLogo.setImageResource(R.drawable.bible_tv_icon);originalLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
    LinearLayout.LayoutParams originalParams=new LinearLayout.LayoutParams(43,44);originalParams.rightMargin=14;
    titleRow.addView(originalLogo,originalParams);
-   TextView title=text("✝  BIBLE TV v1.8   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
+   TextView title=text("✝  BIBLE TV v1.9   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
    panel.addView(titleRow);
    TextView sub=text("Screensaver settings  •  Select directly within each row using your remote",14,SUB);sub.setPadding(0,0,0,8);panel.addView(sub);
    row("Language / اللغة","lang",new String[]{"العربية","English","Both"},new String[]{"ar","en","both"},"ar");
    row("Verse duration","interval_choice",new String[]{"15 sec","30 sec","60 sec","120 sec"},new String[]{"15","30","60","120"},"15");
+   row("Media display","media_mode",new String[]{"Animated GIFs","Photos"},new String[]{"animated","photos"},"animated");
    row("Background scenes","style_choice",new String[]{"Jesus & Bible","Nature","Mixed"},new String[]{"0","1","2"},"0");
    row("Picture movement","motion_choice",new String[]{"On","Off"},new String[]{"true","false"},"true");
    row("Verse transition","transition_choice",new String[]{"Page turn","Soft fade","None"},new String[]{"page","fade","none"},"page");
