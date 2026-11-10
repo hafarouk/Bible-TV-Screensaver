@@ -16,3 +16,10 @@ The Android TV app builds using the GitHub Actions workflow once its Android sou
 - Android TV / Fire TV: APK
 - Samsung Tizen: WGT (must be signed appropriately)
 - LG webOS: IPK
+
+## Version 1.4 test
+- Public-domain paintings, Arabic SVD and English KJV embedded offline
+- Exact proportionally reduced original Velthon logo beside Bible TV title
+- Original 16-second WAV ambient musical loop, opt-in with volume controls
+- One-hour no-repeat randomized verse rotation (minimum 250 paired verses)
+- Source details in ASSET_SOURCES.md
