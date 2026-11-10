@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Canvas;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -61,14 +60,14 @@ public class BibleDisplay extends FrameLayout {
  picture=new ImageView(c);picture.setScaleType(ImageView.ScaleType.CENTER_CROP);addView(picture,new LayoutParams(-1,-1));
  View shade=new View(c);shade.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{0x66000000,0x33000000,0xdd050c17}));addView(shade,new LayoutParams(-1,-1));
  LinearLayout card=new LinearLayout(c);card.setGravity(Gravity.CENTER);card.setOrientation(LinearLayout.VERTICAL);card.setPadding(40,25,40,25);addView(card,new LayoutParams(-1,-1));
- LinearLayout brand=new LinearLayout(c);brand.setGravity(Gravity.CENTER);brand.setOrientation(LinearLayout.HORIZONTAL);
- ImageView velthon=new ImageView(c);velthon.setImageResource(R.drawable.velthon_original);velthon.setScaleType(ImageView.ScaleType.FIT_CENTER);
- LinearLayout.LayoutParams logoParams=new LinearLayout.LayoutParams(46,47);logoParams.rightMargin=12;brand.addView(velthon,logoParams);
- TextView mark=new TextView(c);mark.setText("✝  BIBLE TV");mark.setTextColor(0xffffd68a);mark.setTextSize(24);mark.setGravity(Gravity.CENTER_VERTICAL);brand.addView(mark);
- card.addView(brand);
+ TextView mark=new TextView(c);mark.setText("✝  BIBLE TV");mark.setTextColor(0xffffd68a);mark.setTextSize(24);mark.setGravity(Gravity.CENTER);card.addView(mark);
  verse=new TextView(c);verse.setGravity(Gravity.CENTER);verse.setTextDirection(View.TEXT_DIRECTION_FIRST_STRONG);verse.setTextColor(Color.WHITE);verse.setTextSize(37);verse.setTypeface(Typeface.DEFAULT,Typeface.BOLD);verse.setShadowLayer(8,2,3,Color.BLACK);verse.setPadding(10,22,10,22);card.addView(verse);
  reference=new TextView(c);reference.setGravity(Gravity.CENTER);reference.setTextColor(0xffffdfa2);reference.setTextSize(22);reference.setShadowLayer(5,2,2,Color.BLACK);card.addView(reference);
- caption=new TextView(c);caption.setText("Velthon Design & Development");caption.setTextColor(0xffe8e0d0);caption.setTextSize(12);caption.setGravity(Gravity.CENTER);LayoutParams cp=new LayoutParams(-1,-2,Gravity.BOTTOM);cp.bottomMargin=18;addView(caption,cp);
+ LinearLayout footer=new LinearLayout(c);footer.setGravity(Gravity.CENTER);footer.setOrientation(LinearLayout.HORIZONTAL);
+ ImageView velthon=new ImageView(c);velthon.setImageResource(R.drawable.velthon_original);velthon.setScaleType(ImageView.ScaleType.FIT_CENTER);
+ LinearLayout.LayoutParams logoParams=new LinearLayout.LayoutParams(32,32);logoParams.rightMargin=8;footer.addView(velthon,logoParams);
+ caption=new TextView(c);caption.setText("Developed by VELTHON Design & Development");caption.setTextColor(0xffe8e0d0);caption.setTextSize(13);caption.setShadowLayer(4,1,2,Color.BLACK);caption.setGravity(Gravity.CENTER_VERTICAL);footer.addView(caption);
+ LayoutParams cp=new LayoutParams(-1,42,Gravity.BOTTOM);cp.bottomMargin=12;addView(footer,cp);
  // A small animated scene window that stays inside safe TV overscan margins.
  FrameLayout mini=new FrameLayout(c);
  GradientDrawable frame=new GradientDrawable();frame.setColor(0xdd0a1828);frame.setCornerRadius(16);frame.setStroke(2,0xffd1a65b);
@@ -98,11 +97,11 @@ public class BibleDisplay extends FrameLayout {
  private void applyMusic(){
    String track=prefs.getString("music_track","piano");
    if(!running||temporaryMuted||"off".equals(track)){music.stop();return;}
-   music.start(getContext(),prefs.getInt("music_volume",10),track);
+   music.start(getContext(),prefs.getInt("music_volume",25),track);
  }
  private void updateMuteIcon(){
    if(muteButton==null)return;
-   boolean disabled="off".equals(prefs.getString("music_track","off"));
+   boolean disabled="off".equals(prefs.getString("music_track","piano"));
    muteButton.setText(disabled||temporaryMuted?"🔇":"🔊");
    muteButton.setContentDescription(disabled?"Music is turned off in settings":temporaryMuted?"Unmute music":"Mute music");
    muteButton.setVisibility(disabled?View.GONE:View.VISIBLE);
