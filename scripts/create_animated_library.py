@@ -5,7 +5,7 @@ from pathlib import Path
 import math,random
 out=Path("app/src/main/assets/scene_loops");out.mkdir(parents=True,exist_ok=True)
 W,H=480,270
-for n in range(60):
+for n in range(100):
  rng=random.Random(n)
  theme=n%6
  base=[(13,32,66),(11,53,83),(45,31,75),(10,51,42),(8,12,40),(73,42,57)][theme]
