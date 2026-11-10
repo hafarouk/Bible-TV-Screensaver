@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
    ImageView originalLogo=new ImageView(this);originalLogo.setImageResource(R.drawable.bible_tv_icon);originalLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
    LinearLayout.LayoutParams originalParams=new LinearLayout.LayoutParams(43,44);originalParams.rightMargin=14;
    titleRow.addView(originalLogo,originalParams);
-   TextView title=text("✝  BIBLE TV v1.9   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
+   TextView title=text("✝  BIBLE TV v1.10   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
    panel.addView(titleRow);
    TextView sub=text("Screensaver settings  •  Select directly within each row using your remote",14,SUB);sub.setPadding(0,0,0,8);panel.addView(sub);
    row("Language / اللغة","lang",new String[]{"العربية","English","Both"},new String[]{"ar","en","both"},"ar");
