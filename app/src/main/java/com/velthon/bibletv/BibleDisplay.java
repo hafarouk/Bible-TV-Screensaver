@@ -39,7 +39,7 @@ public class BibleDisplay extends FrameLayout {
  private int mediaIndex=-1;
  private final java.util.HashSet<Integer> seenArtwork=new java.util.HashSet<>();
  private JSONArray artworkManifest;
- private TextView muteButton;
+ private TextView muteButton;private TextView weatherHeader;private final Handler weatherHandler=new Handler(Looper.getMainLooper());
  private boolean temporaryMuted=false;
  private String[][] verses;
  private final Random random=new Random();
@@ -66,6 +66,7 @@ public class BibleDisplay extends FrameLayout {
  fallback=new View(c);fallback.setBackground(new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{0xff0b1b31,0xff435971,0xffc38b53}));addView(fallback,new LayoutParams(-1,-1));
  picture=new ImageView(c);picture.setScaleType(ImageView.ScaleType.CENTER_CROP);addView(picture,new LayoutParams(-1,-1));
 
+ weatherHeader=new TextView(c);weatherHeader.setTextColor(Color.WHITE);weatherHeader.setTextSize(18);weatherHeader.setGravity(Gravity.CENTER);weatherHeader.setPadding(18,9,18,9);weatherHeader.setBackgroundColor(0xbb07152c);LayoutParams wh=new LayoutParams(-2,-2,Gravity.TOP|Gravity.CENTER_HORIZONTAL);wh.topMargin=18;addView(weatherHeader,wh);weatherHeader.setText("Loading weather...");
  View shade=new View(c);shade.setBackground(new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,new int[]{0x11000000,0x55040a16,0xaa040a16}));addView(shade,new LayoutParams(-1,-1));
  
  reference=new TextView(c);reference.setGravity(Gravity.CENTER);reference.setTextColor(0xffffdf9c);reference.setTextSize(21);reference.setTypeface(Typeface.SERIF,Typeface.BOLD);reference.setPadding(22,8,22,8);GradientDrawable refBg=new GradientDrawable();refBg.setColor(0xdd07152c);refBg.setCornerRadius(38);refBg.setStroke(2,0xffd8a93c);reference.setBackground(refBg);LayoutParams refLp=new LayoutParams(-2,-2,Gravity.BOTTOM|Gravity.LEFT);refLp.setMargins(30,0,0,20);addView(reference,refLp);
@@ -88,7 +89,27 @@ public class BibleDisplay extends FrameLayout {
  muteButton.setOnClickListener(v->toggleMute());
  updateMuteIcon();
  }
- public void start(){running=true;temporaryMuted=false;applyMusic();updateMuteIcon();next();}
+ public void start(){running=true;updateWeather();temporaryMuted=false;applyMusic();updateMuteIcon();next();}
+ private void updateWeather(){
+  if(!running)return;
+  java.text.SimpleDateFormat clock=new java.text.SimpleDateFormat("h:mm a",java.util.Locale.CANADA);
+  String city=prefs.getString("weather_city","Gravenhurst");
+  weatherHeader.setText(city+"  |  "+clock.format(new java.util.Date())+"  |  Weather loading");
+  new Thread(()->{try{
+   String encoded=java.net.URLEncoder.encode(city,"UTF-8");
+   java.net.HttpURLConnection geo=(java.net.HttpURLConnection)new URL("https://geocoding-api.open-meteo.com/v1/search?name="+encoded+"&count=1&language=en&format=json").openConnection();geo.setConnectTimeout(7000);geo.setReadTimeout(7000);
+   JSONObject loc;try(InputStream in=geo.getInputStream()){loc=new JSONObject(readAll(in)).getJSONArray("results").getJSONObject(0);}finally{geo.disconnect();}
+   String lat=String.valueOf(loc.getDouble("latitude")),lon=String.valueOf(loc.getDouble("longitude"));
+   java.net.HttpURLConnection con=(java.net.HttpURLConnection)new URL("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=auto").openConnection();con.setConnectTimeout(7000);con.setReadTimeout(7000);
+   JSONObject current;try(InputStream in=con.getInputStream()){current=new JSONObject(readAll(in)).getJSONObject("current");}finally{con.disconnect();}
+   int code=current.getInt("weather_code");String condition=code==0?"Clear":code<=3?"Partly cloudy":code<=48?"Fog":code<=67?"Rain":code<=77?"Snow":code<=82?"Showers":code<=86?"Snow showers":code<=99?"Thunderstorm":"Cloudy";
+   String result=loc.optString("name",city)+"  |  "+Math.round(current.getDouble("temperature_2m"))+"°C  |  "+condition+"  |  Feels "+Math.round(current.getDouble("apparent_temperature"))+"°  |  Wind "+Math.round(current.getDouble("wind_speed_10m"))+" km/h";
+   post(()->{if(running){weatherHeader.setTag(result);weatherHeader.setText(result+"  |  "+clock.format(new java.util.Date()));}});
+  }catch(Exception ex){post(()->{if(running)weatherHeader.setText(city+"  |  "+clock.format(new java.util.Date())+"  |  Weather unavailable"));}
+  }).start();
+  weatherHandler.postDelayed(()->{if(running){String data=(String)weatherHeader.getTag();if(data!=null)weatherHeader.setText(data+"  |  "+clock.format(new java.util.Date()));weatherHandler.postDelayed(()->updateWeather(),60000);}},60000);
+ }
+ private static String readAll(InputStream in)throws Exception{ByteArrayOutputStream b=new ByteArrayOutputStream();byte[] buf=new byte[4096];int n;while((n=in.read(buf))!=-1)b.write(buf,0,n);return b.toString("UTF-8");}
  public void toggleMute(){temporaryMuted=!temporaryMuted;applyMusic();updateMuteIcon();}
  private void applyMusic(){
    String track=prefs.getString("music_track","piano");
@@ -102,7 +123,7 @@ public class BibleDisplay extends FrameLayout {
    muteButton.setContentDescription(disabled?"Music is turned off in settings":temporaryMuted?"Unmute music":"Mute music");
    muteButton.setVisibility(disabled?View.GONE:View.VISIBLE);
  }
- public void stop(){running=false;music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}}
+ public void stop(){weatherHandler.removeCallbacksAndMessages(null);running=false;music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}}
  public void next(){handler.removeCallbacksAndMessages(null);if(!running)return;int chosen=chooseIndex();
  if(chosen<0){handler.postDelayed(()->next(),1000L);return;}
  // Capture the previous screen before changing its verse, for an animated Bible page turn.
