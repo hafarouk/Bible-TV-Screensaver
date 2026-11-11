@@ -1,0 +1,49 @@
+# Bible TV Screensaver — Approved Product Requirements
+
+This file is the persistent source of truth for user-approved decisions. Do not replace, reinterpret, or silently drop any item. Mark implementation and device validation separately. Never claim a release includes an item merely because its source code was edited.
+
+## Branding — MUST MATCH EXACT ORIGINAL ASSET
+- Approved logo: **Bible TV Screensaver Logo.png**, saved in the user's ChatGPT Library. It depicts a blue/gold television, Jesus at left, an open Bible, a bright cross at right, Bible TV Screensaver lettering and Velthon branding.
+- **Do not create a substitute logo** (cross/book icon is NOT approved). Obtain exact original file bytes and include in Android launcher icon, banner and app settings as appropriate.
+- Screensaver footer must be **text only**: `By: VELTHON Design & Development`. No additional company logo or banner on the verse screen.
+- Status: ORIGINAL LOGO NOT YET VERIFIED IN APK. Do not say complete.
+
+## Artwork
+- **No animated GIFs, generated landscape animations, small picture-in-picture boxes, or unattractive placeholder images.**
+- Full-screen, high-quality **still Christian artwork depicting Jesus and biblical events**, e.g., Nativity, Baptism, miracles, teaching, Holy Week, Crucifixion, Resurrection and Ascension.
+- Prefer a substantial varied library, not repeated 3–25 images; target 100+ if enough eligible images exist, never fabricate quantity.
+- For commercial/public distribution, only bundle images with **verified CC0 or public-domain rights** and clear source/rights provenance. Avoid CC BY, CC BY-SA, CC BY-NC and unclear licenses. Prefer explicitly CC0 museum open-access sources (e.g., The Met); no source guarantees zero legal liability.
+- Store image title, artist, source URL and license status in an offline manifest. Exclude uncertain images. Package offline.
+- Fit/crop thoughtfully, preserving central subjects and text readability. No animation/motion on pictures.
+- Status: CC0-only collection script changed, but new artwork APK NOT YET BUILT/VERIFIED.
+
+## Bible verses and references
+- Arabic setting: **Arabic verse AND Arabic book reference** with Arabic-Indic numerals, e.g. `يوحنا ٣:١٦`.
+- English setting: English verse AND English reference, e.g. `John 3:16`.
+- Both: Arabic and English verse text **AND both references** on screen, clearly separated.
+- Paired public-domain Arabic SVD and English KJV, packaged offline. One-hour cooldown to avoid frequent verse repeats; 15/30/60/120-second intervals.
+- Status: implementation reported in source; must verify behavior on TV.
+
+## Android TV / Fire TV settings
+- Simple, concise, high-contrast, D-pad navigable; no clipped/truncated text.
+- Choices selected **on the same row**; scroll horizontally as needed. No hidden cycling-button interface.
+- Language, verse duration, page-turn/fade/none transitions, background music on/off and selection, volume, preview, TV screensaver settings.
+- No GIF/media mode or unused animation speed controls.
+- Status: source updated; needs physical TV validation.
+
+## Audio and transitions
+- Soft original music that actually plays; option to disable, adjust volume, preview; test on TV.
+- Page-curl transition and optional fade/none. No moving pictures.
+
+## Release and verification gate
+- Do not call a release ready until GitHub Actions succeeds **on the final intended commit**.
+- Download the exact artifact, inspect APK contents (logo, artwork, offline verses), and confirm version/commit.
+- A successful GitHub build alone does not prove actual Android TV rendering/audio or correct logo.
+- Provide only verified download links; never reuse an older APK as though it includes newer changes.
+- Track each requirement as: requested / committed / APK-verified / device-tested.
+- Never silently remove approved features during future changes.
+
+## Immediate blockers
+1. Import the **exact** Library logo PNG into the Android project (GitHub text-only file tools cannot directly upload binary bytes; use a binary-capable GitHub workflow/connector or a safely encoded asset pipeline).
+2. Verify CC0-only Christian artwork generator can build sufficient quality images and run without API rate limiting.
+3. Trigger and inspect final workflow, then extract and validate APK; do not distribute previous v1.11 as a replacement.
