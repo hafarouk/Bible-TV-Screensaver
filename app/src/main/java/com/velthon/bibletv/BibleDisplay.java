@@ -136,8 +136,21 @@ public class BibleDisplay extends FrameLayout {
  picture.setVisibility(View.VISIBLE);picture.setAlpha(1f);
  try{
    if(artworkManifest.length()>0){
-     int nextMedia=random.nextInt(artworkManifest.length());
-     if(artworkManifest.length()>1 && nextMedia==mediaIndex)nextMedia=(nextMedia+1)%artworkManifest.length();
+     String wanted=selectedScene;
+     if(photo==3)wanted="light";
+     else if(photo==4)wanted="water";
+     else if(photo==5)wanted="strength";
+     else if(photo==6)wanted="peace";
+     else if(photo==7)wanted="heaven";
+     java.util.ArrayList<Integer> matches=new java.util.ArrayList<>();
+     for(int k=0;k<artworkManifest.length();k++){
+       if(wanted.equals(artworkManifest.getJSONObject(k).optString("category")))matches.add(k);
+     }
+     if(matches.isEmpty()){
+       for(int k=0;k<artworkManifest.length();k++)matches.add(k);
+     }
+     int nextMedia=matches.get(random.nextInt(matches.size()));
+     if(matches.size()>1 && nextMedia==mediaIndex)nextMedia=matches.get((matches.indexOf(nextMedia)+1)%matches.size());
      mediaIndex=nextMedia;
      String filename=artworkManifest.getJSONObject(mediaIndex).getString("file");
      try(InputStream stream=getContext().getAssets().open("jesus_art/"+filename)){
