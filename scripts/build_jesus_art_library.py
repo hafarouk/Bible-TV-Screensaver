@@ -1,50 +1,51 @@
 #!/usr/bin/env python3
-"""Download verified public-domain historical paintings of events in Jesus' life.
-All images and license metadata are bundled for offline use; fail closed on license.
+"""Package only CC0 Open Access Christian artwork from The Metropolitan Museum of Art.
+Every included image must have isPublicDomain=true and an official Met image URL.
+Fail closed rather than reusing the old Commons/Tissot library.
 """
-import json,urllib.parse,urllib.request,time,io
+import io,json,time,urllib.request,urllib.parse
 from pathlib import Path
-from PIL import Image,ImageOps
-ROOT=Path("app/src/main/assets");OUT=ROOT/"jesus_art";OUT.mkdir(parents=True,exist_ok=True)
-SEARCHES=["James Tissot Jesus","James Tissot Christ","Jesus Christ biblical paintings"]
-API="https://commons.wikimedia.org/w/api.php"
-def query(params):
- url=API+"?"+urllib.parse.urlencode(params)
- req=urllib.request.Request(url,headers={"User-Agent":"BibleTV/1.11 (open source artwork attribution; contact: github.com/hafarouk/Bible-TV-Screensaver)"})
- with urllib.request.urlopen(req,timeout=35) as r:return json.load(r)
-def clean(t):
- import re,html
- return html.unescape(re.sub("<[^>]+>","",t or "")).strip()
-seen=set();records=[]
-for term in SEARCHES:
+from PIL import Image
+BASE="https://collectionapi.metmuseum.org/public/collection"
+ROOT=Path("app/src/main/assets")
+OUT=ROOT/"jesus_art";OUT.mkdir(parents=True,exist_ok=True)
+for old in OUT.glob("jesus_*.jpg"):old.unlink()
+TERMS=["Jesus Christ","Crucifixion","Nativity","Adoration of the Magi","Resurrection of Christ","Madonna and Child","Christ healing","Christ and disciples","Last Supper","Baptism of Christ","Christ carrying cross","Ascension of Christ","Christ in the Garden","Christ preaching"]
+def fetch(url):
+ req=urllib.request.Request(url,headers={"User-Agent":"BibleTV/1.12 (CC0 open-access Christian art project)"})
+ with urllib.request.urlopen(req,timeout=30) as r:return r.read()
+def get_json(url):return json.loads(fetch(url))
+records=[];seen=set()
+for term in TERMS:
+ if len(records)>=75:break
  try:
-  data=query({"action":"query","generator":"search","gsrsearch":term+" filetype:bitmap","gsrnamespace":6,"gsrlimit":50,"prop":"imageinfo","iiprop":"url|extmetadata|size","iiurlwidth":1280,"format":"json"})
-  pages=list(data.get("query",{}).get("pages",{}).values())
-  time.sleep(3)
-  accepted=0
-  for page in pages:
-   if accepted>=22:break
-   if len(records)>=45:break
-   info=(page.get("imageinfo") or [{}])[0];meta=info.get("extmetadata",{})
-   license_code=clean(meta.get("LicenseShortName",{}).get("value","")).lower()
-   usage=clean(meta.get("UsageTerms",{}).get("value","")).lower()
-   if not (license_code in ("public domain","pd-old","cc0","cc-zero") or "public domain" in usage):continue
-   if info.get("width",0)<700 or info.get("height",0)<500:continue
-   title=page.get("title","");url=info.get("thumburl") or info.get("url")
-   if not url or title in seen:continue
-   seen.add(title)
-   req=urllib.request.Request(url,headers={"User-Agent":"BibleTV/1.11 (public domain artwork)"})
-   with urllib.request.urlopen(req,timeout=35) as r:raw=r.read(8_000_000)
-   img=Image.open(io.BytesIO(raw)).convert("RGB")
-   if img.width<640 or img.height<400:continue
-   name="jesus_%03d.jpg"%len(records)
-   img.thumbnail((1280,900));img.save(OUT/name,quality=82,optimize=True)
-   time.sleep(0.8)
-   accepted+=1
-   records.append({"file":name,"title":title,"source":info.get("descriptionurl",""),"license":license_code,"artist":clean(meta.get("Artist",{}).get("value",""))[:160]})
-   print(name,title,license_code,flush=True)
-   if len(records)>=65:break
- except Exception as e:print("Search unavailable:",term,str(e),flush=True)
-if len(records)<15:raise RuntimeError("Only %d verified paintings; refusing to ship limited image library"%len(records))
-(ROOT/"jesus_art_manifest.json").write_text(json.dumps(records,ensure_ascii=False,indent=2))
-print("Verified public domain images:",len(records))
+  params=urllib.parse.urlencode({"q":term,"hasImages":"true"})
+  result=get_json(BASE+"/v1/search?"+params)
+  for oid in (result.get("objectIDs") or [])[:90]:
+   if len(records)>=75:break
+   if oid in seen:continue
+   seen.add(oid)
+   try:
+    obj=get_json(BASE+"/v1/objects/"+str(oid))
+    if obj.get("isPublicDomain") is not True:continue
+    url=obj.get("primaryImage") or ""
+    if not url.startswith("https://images.metmuseum.org/"):continue
+    title=(obj.get("title") or "").lower()
+    tags=(obj.get("tags") or [])
+    searchable=title+" "+(obj.get("objectName") or "").lower()+" "+" ".join((t.get("term") or "").lower() for t in tags)
+    if not any(w in searchable for w in ("christ","jesus","madonna","virgin","nativity","crucifix","resurrection","adoration","baptism","saint","holy family","last supper")):continue
+    raw=fetch(url)
+    if len(raw)>16000000:continue
+    im=Image.open(io.BytesIO(raw))
+    if im.width<900 or im.height<650:continue
+    im=im.convert("RGB");im.thumbnail((1920,1080))
+    name="jesus_%03d.jpg"%len(records)
+    im.save(OUT/name,quality=86,optimize=True)
+    records.append({"file":name,"title":obj.get("title"),"artist":obj.get("artistDisplayName"),"source":obj.get("objectURL"),"objectID":oid,"license":"CC0 / The Met Open Access","isPublicDomain":True})
+    print(name,obj.get("title"),flush=True)
+    time.sleep(0.15)
+   except Exception as e:print("Skipped object",oid,str(e),flush=True)
+ except Exception as e:print("Search failed",term,str(e),flush=True)
+if len(records)<20:raise RuntimeError("Only %d confirmed Met CC0 images; refusing release"%len(records))
+(ROOT/"jesus_art_manifest.json").write_text(json.dumps(records,ensure_ascii=False,indent=2),encoding="utf8")
+print("Packaged",len(records),"Met Open Access CC0 paintings")
