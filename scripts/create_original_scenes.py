@@ -47,8 +47,8 @@ for name,(top,mid,bottom) in themes.items():
  print("Original offline scene",target,target.stat().st_size)
 
 # Do not generate a substitute Bible TV icon. The approved icon must be supplied
-# as app/src/main/res/drawable-nodpi/bible_tv_icon.png, from the exact approved asset.
-icon_path=out/"bible_tv_icon.png"
+# as app/src/main/res/drawable-nodpi/bible_tv_icon.jpg, from the exact approved asset.
+icon_path=out/"bible_tv_icon.jpg"
 if not icon_path.exists():
  raise SystemExit("Missing approved Bible TV icon: app/src/main/res/drawable-nodpi/bible_tv_icon.png. Refusing to generate a substitute.")
 print("Using approved Bible TV icon",icon_path)
