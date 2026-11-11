@@ -46,12 +46,9 @@ for name,(top,mid,bottom) in themes.items():
  target=out/("scene_"+name+".jpg");im.save(target,quality=88,optimize=True)
  print("Original offline scene",target,target.stat().st_size)
 
-# Dedicated Bible TV launcher icon, never the VELTHON corporate mark.
-icon=Image.new("RGB",(512,512),(13,32,61));d=ImageDraw.Draw(icon)
-d.rounded_rectangle((35,35,477,477),radius=92,fill=(23,54,91),outline=(227,184,92),width=13)
-d.polygon([(88,298),(244,315),(244,411),(88,393)],fill=(245,228,187))
-d.polygon([(268,315),(424,298),(424,393),(268,411)],fill=(245,228,187))
-d.line((256,301,256,416),fill=(220,160,75),width=12)
-d.rounded_rectangle((238,98,274,285),radius=7,fill=(255,219,140))
-d.rounded_rectangle((178,153,334,188),radius=7,fill=(255,219,140))
-icon.save(out/"bible_tv_icon.png")
+# Do not generate a substitute Bible TV icon. The approved icon must be supplied
+# as app/src/main/res/drawable-nodpi/bible_tv_icon.png, from the exact approved asset.
+icon_path=out/"bible_tv_icon.png"
+if not icon_path.exists():
+ raise SystemExit("Missing approved Bible TV icon: app/src/main/res/drawable-nodpi/bible_tv_icon.png. Refusing to generate a substitute.")
+print("Using approved Bible TV icon",icon_path)
