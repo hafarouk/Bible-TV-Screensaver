@@ -105,7 +105,7 @@ public class BibleDisplay extends FrameLayout {
    int code=current.getInt("weather_code");String condition=code==0?"Clear":code<=3?"Partly cloudy":code<=48?"Fog":code<=67?"Rain":code<=77?"Snow":code<=82?"Showers":code<=86?"Snow showers":code<=99?"Thunderstorm":"Cloudy";
    String result=loc.optString("name",city)+"  |  "+Math.round(current.getDouble("temperature_2m"))+"°C  |  "+condition+"  |  Feels "+Math.round(current.getDouble("apparent_temperature"))+"°  |  Wind "+Math.round(current.getDouble("wind_speed_10m"))+" km/h";
    post(()->{if(running){weatherHeader.setTag(result);weatherHeader.setText(result+"  |  "+clock.format(new java.util.Date()));}});
-  }catch(Exception ex){post(()->{if(running)weatherHeader.setText(city+"  |  "+clock.format(new java.util.Date())+"  |  Weather unavailable"));}
+  }catch(Exception ex){post(()->{if(running)weatherHeader.setText(city+"  |  "+clock.format(new java.util.Date())+"  |  Weather unavailable");});
   }).start();
   weatherHandler.postDelayed(()->{if(running){String data=(String)weatherHeader.getTag();if(data!=null)weatherHeader.setText(data+"  |  "+clock.format(new java.util.Date()));weatherHandler.postDelayed(()->updateWeather(),60000);}},60000);
  }
