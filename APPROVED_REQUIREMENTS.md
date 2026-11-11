@@ -31,6 +31,12 @@ This file is the persistent source of truth for user-approved decisions. Do not 
 - Paired public-domain Arabic SVD and English KJV, packaged offline. One-hour cooldown to avoid frequent verse repeats; 15/30/60/120-second intervals.
 - Status: implementation reported in source; must verify behavior on TV.
 
+## Verse editorial quality
+- Use a curated set of **standalone, complete, spiritually meaningful** verses conveying hope, comfort, guidance, faith, love, wisdom and God's promises. Do not populate screens with arbitrary length-filtered verses or sentence fragments.
+- Pair Arabic SVD and English KJV by the exact same book/chapter/verse; retain accurate Arabic/English references. Reject obvious dependent clauses and unfinished sentences in either language. Editorial review is still required; automated filtering alone cannot guarantee every verse is self-contained.
+- Preserve enough eligible distinct verses for at least one hour without repeats at 15-second rotation. Fail the build if the curated collection is too small.
+- Status: curated selection implemented in `scripts/build_verse_library.py`; final generated content and APK still require verification.
+
 ## Android TV / Fire TV settings
 - Simple, concise, high-contrast, D-pad navigable; no clipped/truncated text.
 - Choices selected **on the same row**; scroll horizontally as needed. No hidden cycling-button interface.
