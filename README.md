@@ -16,3 +16,6 @@ The Android TV app builds using the GitHub Actions workflow once its Android sou
 - Android TV / Fire TV: APK
 - Samsung Tizen: WGT (must be signed appropriately)
 - LG webOS: IPK
+
+## v1.5 APK revalidation
+Bundled three verified biblical paintings, speaker icon mute control, music tracks. Failed fourth source removed.
