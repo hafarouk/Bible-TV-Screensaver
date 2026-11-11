@@ -1,3 +1,9 @@
+## Current interim logo decision (2026-11-11)
+- User approved the most recently generated **white-background Bible TV logo** for temporary use in the Android TV app, despite earlier preference for exact Velthon logo. **Do not substitute a different design.**
+- Exact saved image: ChatGPT Library `/Brand Assets/Bible_TV_Temporary_Approved_App_Logo.png`, library ID `libfile_36b8a263c83481919c0bda1c70e7763a`, file ID `file_000000002410822f983f40919f722ad8`.
+- The original unmodified VELTHON emblem remains stored separately at `/Brand Assets/VELTHON_ORIGINAL_OFFICIAL_LOGO_UNMODIFIED.png`.
+- **Not yet installed into Android drawable or APK**; must verify binary asset inclusion before reporting completion.
+
 # Bible TV Screensaver — Approved Product Requirements
 
 This file is the persistent source of truth for user-approved decisions. Do not replace, reinterpret, or silently drop any item. Mark implementation and device validation separately. Never claim a release includes an item merely because its source code was edited.
