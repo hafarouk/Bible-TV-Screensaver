@@ -57,9 +57,22 @@ public class MainActivity extends Activity {
    }
  }
  private void action(String label,Runnable r){
-   Button b=new Button(this);b.setText(label);b.setTextSize(19);b.setTextColor(WHITE);b.setGravity(Gravity.CENTER);b.setMinHeight(60);b.setAllCaps(false);
-   b.setBackground(bg(false,false));LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,64);p.setMargins(0,7,0,0);panel.addView(b,p);
-   b.setOnClickListener(v->r.run());b.setOnFocusChangeListener((v,f)->b.setBackground(bg(false,f)));
+   TextView control=text(label,20,WHITE);
+   control.setGravity(Gravity.CENTER);
+   control.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
+   control.setSingleLine(false);
+   control.setIncludeFontPadding(true);
+   control.setPadding(20,12,20,12);
+   control.setFocusable(true);
+   control.setFocusableInTouchMode(false);
+   control.setClickable(true);
+   control.setBackground(bg(false,false));
+   LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,-2);
+   p.setMargins(0,10,0,0);
+   panel.addView(control,p);
+   control.setMinHeight(76);
+   control.setOnClickListener(v->r.run());
+   control.setOnFocusChangeListener((v,focused)->control.setBackground(bg(false,focused)));
  }
  private void render(){
    panel.removeAllViews();
