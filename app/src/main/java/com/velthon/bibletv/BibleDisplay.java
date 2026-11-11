@@ -63,14 +63,14 @@ public class BibleDisplay extends FrameLayout {
  byte[] chunk=new byte[4096];int count;while((count=art.read(chunk))!=-1)bytes.write(chunk,0,count);
  artworkManifest=new JSONArray(bytes.toString("UTF-8"));
  }catch(Exception e){android.util.Log.e("BibleTV","Art library unavailable",e);artworkManifest=new JSONArray();}
- fallback=new View(c);fallback.setBackground(new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{0xff0b1b31,0xff435971,0xffc38b53}));addView(fallback,new LayoutParams(-1,-1));
- picture=new ImageView(c);picture.setScaleType(ImageView.ScaleType.CENTER_CROP);addView(picture,new LayoutParams(-1,-1));
+ fallback=new View(c);fallback.setBackgroundColor(0xff0c1c32);addView(fallback,new LayoutParams(-1,-1));
+ picture=new ImageView(c);picture.setScaleType(ImageView.ScaleType.CENTER_CROP);addView(picture,new LayoutParams(-1,-1));picture.setVisibility(View.GONE);
 
  weatherHeader=new TextView(c);weatherHeader.setTextColor(Color.WHITE);weatherHeader.setTextSize(18);weatherHeader.setGravity(Gravity.CENTER);weatherHeader.setPadding(18,9,18,9);weatherHeader.setBackgroundColor(0xbb07152c);LayoutParams wh=new LayoutParams(-2,-2,Gravity.TOP|Gravity.CENTER_HORIZONTAL);wh.topMargin=18;addView(weatherHeader,wh);weatherHeader.setText("Loading weather...");
- View shade=new View(c);shade.setBackground(new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,new int[]{0x11000000,0x55040a16,0xaa040a16}));addView(shade,new LayoutParams(-1,-1));
+ View shade=new View(c);shade.setBackgroundColor(0x00000000);addView(shade,new LayoutParams(-1,-1));
  
  reference=new TextView(c);reference.setGravity(Gravity.CENTER);reference.setTextColor(0xffffdf9c);reference.setTextSize(21);reference.setTypeface(Typeface.SERIF,Typeface.BOLD);reference.setPadding(22,8,22,8);GradientDrawable refBg=new GradientDrawable();refBg.setColor(0xdd07152c);refBg.setCornerRadius(38);refBg.setStroke(2,0xffd8a93c);reference.setBackground(refBg);LayoutParams refLp=new LayoutParams(-2,-2,Gravity.BOTTOM|Gravity.LEFT);refLp.setMargins(30,0,0,20);addView(reference,refLp);
- LinearLayout card=new LinearLayout(c);card.setGravity(Gravity.CENTER);card.setOrientation(LinearLayout.VERTICAL);card.setPadding(25,22,25,22);GradientDrawable cardBg=new GradientDrawable();cardBg.setColor(0xcc07152c);cardBg.setCornerRadius(24);cardBg.setStroke(2,0xffd8a93c);card.setBackground(cardBg);LayoutParams cardLp=new LayoutParams(-1,-2,Gravity.CENTER);cardLp.leftMargin=190;cardLp.rightMargin=190;addView(card,cardLp);
+ LinearLayout card=new LinearLayout(c);card.setGravity(Gravity.CENTER);card.setOrientation(LinearLayout.VERTICAL);card.setPadding(25,22,25,22);GradientDrawable cardBg=new GradientDrawable();cardBg.setColor(0xff172c49);cardBg.setCornerRadius(24);cardBg.setStroke(2,0xffd8a93c);card.setBackground(cardBg);LayoutParams cardLp=new LayoutParams(-1,-2,Gravity.CENTER);cardLp.leftMargin=190;cardLp.rightMargin=190;addView(card,cardLp);
  verse=new TextView(c);verse.setGravity(Gravity.CENTER);verse.setTextColor(0xfffff1d5);verse.setTextSize(34);verse.setTypeface(Typeface.SERIF,Typeface.BOLD_ITALIC);verse.setShadowLayer(5,1,2,Color.BLACK);card.addView(verse);
  TextView separator=new TextView(c);separator.setText("━━━━  ✝  ━━━━");separator.setGravity(Gravity.CENTER);separator.setTextColor(0xffffce70);separator.setTextSize(19);separator.setPadding(0,8,0,8);card.addView(separator);
  arabicVerse=new TextView(c);arabicVerse.setGravity(Gravity.CENTER);arabicVerse.setTextDirection(View.TEXT_DIRECTION_RTL);arabicVerse.setTextColor(Color.WHITE);arabicVerse.setTextSize(33);arabicVerse.setTypeface(Typeface.DEFAULT,Typeface.BOLD);arabicVerse.setShadowLayer(5,1,2,Color.BLACK);card.addView(arabicVerse);
@@ -157,7 +157,7 @@ public class BibleDisplay extends FrameLayout {
  picture.animate().cancel();
  if(motion!=null){motion.cancel();motion=null;}
  picture.setScaleX(1f);picture.setScaleY(1f);picture.setTranslationX(0);picture.setTranslationY(0);
- picture.setVisibility(View.VISIBLE);picture.setAlpha(1f);
+ picture.setVisibility(View.GONE);picture.setAlpha(1f);
  try{
    if(artworkManifest.length()>0){
      String wanted=selectedScene;
