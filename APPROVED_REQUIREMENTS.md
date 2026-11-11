@@ -13,7 +13,7 @@ This file is the persistent source of truth for user-approved decisions. Do not 
 - **Do not create a substitute logo.** Use the original user-uploaded Velthon emblem unchanged; do not substitute generated lion designs or the old Jesus-and-TV logo. The actual approved app icon is the user-uploaded TV image `file_00000000eb00822f8a6279a783a444b5`, but it requires the white-background/non-italic text adjustments and insertion of the exact original Velthon emblem.
 
 - Screensaver footer must be **text only**: `By: VELTHON Design & Development`. No additional company logo or banner on the verse screen.
-- Status: ORIGINAL LOGO NOT YET VERIFIED IN APK. Do not say complete.
+- Status: Temporary approved Bible TV icon committed as `app/src/main/res/drawable-nodpi/bible_tv_icon.jpg` (512×512 derived from the exact approved composite image). APK packaging and TV rendering NOT YET VERIFIED. Original standalone VELTHON logo remains unchanged in Library.
 
 ## Artwork
 - **No animated GIFs, generated landscape animations, small picture-in-picture boxes, or unattractive placeholder images.**
@@ -51,6 +51,6 @@ This file is the persistent source of truth for user-approved decisions. Do not 
 - Never silently remove approved features during future changes.
 
 ## Immediate blockers
-1. Import the **exact** Library logo PNG into the Android project (GitHub text-only file tools cannot directly upload binary bytes; use a binary-capable GitHub workflow/connector or a safely encoded asset pipeline).
+1. Temporary approved composite Bible TV logo installed as a drawable via GitHub binary blob. Verify its inclusion in the next APK. The original standalone VELTHON logo remains saved separately.
 2. Verify CC0-only Christian artwork generator can build sufficient quality images and run without API rate limiting.
 3. Trigger and inspect final workflow, then extract and validate APK; do not distribute previous v1.11 as a replacement.
