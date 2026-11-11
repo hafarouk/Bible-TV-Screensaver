@@ -6,18 +6,7 @@ import json,urllib.parse,urllib.request,time,io
 from pathlib import Path
 from PIL import Image,ImageOps
 ROOT=Path("app/src/main/assets");OUT=ROOT/"jesus_art";OUT.mkdir(parents=True,exist_ok=True)
-SEARCHES=[
-"James Tissot Jesus nativity","James Tissot adoration magi","James Tissot baptism Jesus",
-"James Tissot temptation Jesus","James Tissot wedding Cana","James Tissot sermon mount",
-"James Tissot Jesus healing","James Tissot Jesus paralytic","James Tissot Jesus blind",
-"James Tissot Jesus children","James Tissot feeding multitude","James Tissot walking water",
-"James Tissot Jesus storm","James Tissot Jesus Lazarus","James Tissot transfiguration",
-"James Tissot entry Jerusalem","James Tissot Jesus temple","James Tissot last supper",
-"James Tissot Gethsemane","James Tissot Jesus arrest","James Tissot Jesus trial",
-"James Tissot Jesus cross","James Tissot crucifixion","James Tissot resurrection",
-"James Tissot Jesus Mary Magdalene","James Tissot Jesus Emmaus","James Tissot ascension",
-"Jesus Christ painting Raphael public domain","Jesus Christ painting Rembrandt public domain",
-"Jesus Christ painting Carl Bloch public domain","Jesus Christ painting Heinrich Hofmann public domain"]
+SEARCHES=["James Tissot Jesus","James Tissot Christ","Jesus Christ biblical paintings"]
 API="https://commons.wikimedia.org/w/api.php"
 def query(params):
  url=API+"?"+urllib.parse.urlencode(params)
@@ -29,11 +18,12 @@ def clean(t):
 seen=set();records=[]
 for term in SEARCHES:
  try:
-  data=query({"action":"query","generator":"search","gsrsearch":term+" filetype:bitmap","gsrnamespace":6,"gsrlimit":6,"prop":"imageinfo","iiprop":"url|extmetadata|size","iiurlwidth":1280,"format":"json"})
+  data=query({"action":"query","generator":"search","gsrsearch":term+" filetype:bitmap","gsrnamespace":6,"gsrlimit":50,"prop":"imageinfo","iiprop":"url|extmetadata|size","iiurlwidth":1280,"format":"json"})
   pages=list(data.get("query",{}).get("pages",{}).values())
+  time.sleep(3)
   accepted=0
   for page in pages:
-   if accepted>=2:break
+   if accepted>=22:break
    if len(records)>=45:break
    info=(page.get("imageinfo") or [{}])[0];meta=info.get("extmetadata",{})
    license_code=clean(meta.get("LicenseShortName",{}).get("value","")).lower()
@@ -49,6 +39,7 @@ for term in SEARCHES:
    if img.width<640 or img.height<400:continue
    name="jesus_%03d.jpg"%len(records)
    img.thumbnail((1280,900));img.save(OUT/name,quality=82,optimize=True)
+   time.sleep(0.8)
    accepted+=1
    records.append({"file":name,"title":title,"source":info.get("descriptionurl",""),"license":license_code,"artist":clean(meta.get("Artist",{}).get("value",""))[:160]})
    print(name,title,license_code,flush=True)
