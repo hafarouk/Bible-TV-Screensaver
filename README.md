@@ -16,3 +16,6 @@ The Android TV app builds using the GitHub Actions workflow once its Android sou
 - Android TV / Fire TV: APK
 - Samsung Tizen: WGT (must be signed appropriately)
 - LG webOS: IPK
+
+## v1.5 test build
+Music options: off/piano/strings/ambient, with a speaker mute/unmute overlay on the screensaver, TV remote D-pad focus, and pause/mute shortcut support.
