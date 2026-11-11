@@ -38,4 +38,27 @@ with Image.open(source) as atlas:
     "category":category,"license":"Original AI-generated artwork for Bible TV",
     "source":"bundled-offline","original":True})
 (root/"assets/jesus_art_manifest.json").write_text(json.dumps(records,indent=2),encoding="utf8")
-print("Bundled 50 newly generated biblical and nature images, with no reused prior pictures",flush=True)
+# Second original artwork atlas: 50 additional illustrations (10 columns × 5 rows).
+second=root/"assets/bible_tv_additional_50_atlas.jpg"
+if not second.exists():raise RuntimeError("Missing second original 50-image atlas")
+second_categories=[
+ "spirit","mountain","harvest","nature","light","water","nature","nature","water","mountain",
+ "mountain","nature","harvest","nature","water","nature","light","water","nature","nature",
+ "nature","light","nature","water","nature","nature","mountain","nature","light","nature",
+ "nature","light","nature","nature","water","light","nature","water","nature","nature",
+ "nature","nature","light","nature","nature","mountain","water","nature","nature","light"
+]
+assert len(second_categories)==50
+with Image.open(second) as atlas:
+ atlas=atlas.convert("RGB");w,h=atlas.size
+ for i,category in enumerate(second_categories):
+  row,col=divmod(i,10)
+  tile=atlas.crop((round(col*w/10)+2,round(row*h/5)+2,round((col+1)*w/10)-2,round((row+1)*h/5)-2))
+  tile=ImageOps.fit(tile,(960,540),method=Image.Resampling.LANCZOS)
+  name="jesus_%03d.jpg"%(50+i)
+  tile.save(out/name,quality=86,optimize=True)
+  records.append({"file":name,"title":"Additional original Bible TV scene %02d"%(i+51),
+   "category":category,"license":"Original AI-generated artwork for Bible TV",
+   "source":"bundled-offline","original":True})
+(root/"assets/jesus_art_manifest.json").write_text(json.dumps(records,indent=2),encoding="utf8")
+print("Bundled 100 original biblical and nature scene tiles",flush=True)
