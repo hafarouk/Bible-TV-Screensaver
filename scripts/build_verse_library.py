@@ -23,7 +23,7 @@ SELECTED={
  "Eph":{1:[3,4,7,8,9,13,17,18,19,20],2:[4,5,6,8,9,10,13,14,18,19,20,21,22],3:[12,16,17,18,19,20,21],4:[1,2,3,4,15,16,23,24,25,26,27,28,29,30,31,32],5:[1,2,8,9,10,15,16,17,18,19,20,21],6:[1,2,3,4,10,11,13,14,15,16,17,18,19,20]}
 }
 # Avoid opening clauses that depend on a previous verse and fragments ending in a colon.
-BAD_START=re.compile(r"^(?:and|but|for|therefore|wherefore|because|so that|which|who|whose|whom|that|then|or|nevertheless|moreover|now when|as it is written|saying|unto whom|to whom|in whom|of whom|wherein|whereby|even as|if|when|while|after|before|until|except|lest|behold,? and)\\b",re.I)
+BAD_START=re.compile(r"^(?:and|but|for|therefore|wherefore|because|so that|which|who|whose|whom|that|then|or|nevertheless|moreover|now when|as it is written|saying|unto whom|to whom|in whom|of whom|wherein|whereby|even as|if|when|while|after|before|until|except|lest|behold,? and)\b",re.I)
 BAD_AR=re.compile(r"^(?:وَ?لَكِنْ|لأَنَّ|لِكَيْ|حَتَّى|إِذْ|وَإِذْ|فَلَمَّا|وَلَمَّا|قَائِلًا|قَائِلِينَ)")
 AR_DIGITS=str.maketrans("0123456789","٠١٢٣٤٥٦٧٨٩")
 def load(lang,version,book):
