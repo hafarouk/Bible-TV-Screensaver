@@ -37,6 +37,7 @@ public class BibleDisplay extends FrameLayout {
  private SceneLoopView sceneLoop;
  private TextView sceneTag;
  private int mediaIndex=-1;
+ private final java.util.HashSet<Integer> seenArtwork=new java.util.HashSet<>();
  private JSONArray artworkManifest;
  private TextView muteButton;
  private boolean temporaryMuted=false;
@@ -149,8 +150,16 @@ public class BibleDisplay extends FrameLayout {
      if(matches.isEmpty()){
        for(int k=0;k<artworkManifest.length();k++)matches.add(k);
      }
-     int nextMedia=matches.get(random.nextInt(matches.size()));
-     if(matches.size()>1 && nextMedia==mediaIndex)nextMedia=matches.get((matches.indexOf(nextMedia)+1)%matches.size());
+     // Prefer unseen images; never reuse a picture until the entire 50-image library is shown.
+     if(seenArtwork.size()>=artworkManifest.length())seenArtwork.clear();
+     java.util.ArrayList<Integer> unseen=new java.util.ArrayList<>();
+     for(Integer candidate:matches)if(!seenArtwork.contains(candidate))unseen.add(candidate);
+     if(unseen.isEmpty()){
+       for(int k=0;k<artworkManifest.length();k++)if(!seenArtwork.contains(k))unseen.add(k);
+     }
+     if(unseen.isEmpty()){seenArtwork.clear();unseen.addAll(matches);}
+     int nextMedia=unseen.get(random.nextInt(unseen.size()));
+     seenArtwork.add(nextMedia);
      mediaIndex=nextMedia;
      String filename=artworkManifest.getJSONObject(mediaIndex).getString("file");
      try(InputStream stream=getContext().getAssets().open("jesus_art/"+filename)){
