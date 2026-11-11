@@ -67,16 +67,16 @@ public class BibleDisplay extends FrameLayout {
  picture=new ImageView(c);picture.setScaleType(ImageView.ScaleType.CENTER_CROP);addView(picture,new LayoutParams(-1,-1));
 
  View shade=new View(c);shade.setBackground(new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,new int[]{0x11000000,0x55040a16,0xaa040a16}));addView(shade,new LayoutParams(-1,-1));
- ImageView logo=new ImageView(c);logo.setImageResource(R.drawable.bible_tv_icon);logo.setScaleType(ImageView.ScaleType.FIT_CENTER);LayoutParams logoLp=new LayoutParams(104,104,Gravity.TOP|Gravity.LEFT);logoLp.setMargins(24,20,0,0);addView(logo,logoLp);
- reference=new TextView(c);reference.setGravity(Gravity.CENTER);reference.setTextColor(0xffffdf9c);reference.setTextSize(21);reference.setTypeface(Typeface.SERIF,Typeface.BOLD);reference.setPadding(22,8,22,8);GradientDrawable refBg=new GradientDrawable();refBg.setColor(0xdd07152c);refBg.setCornerRadius(38);refBg.setStroke(2,0xffd8a93c);reference.setBackground(refBg);LayoutParams refLp=new LayoutParams(-2,-2,Gravity.TOP|Gravity.RIGHT);refLp.setMargins(0,28,32,0);addView(reference,refLp);
- LinearLayout card=new LinearLayout(c);card.setGravity(Gravity.CENTER);card.setOrientation(LinearLayout.VERTICAL);card.setPadding(25,22,25,22);GradientDrawable cardBg=new GradientDrawable();cardBg.setColor(0x66071120);cardBg.setCornerRadius(20);card.setBackground(cardBg);LayoutParams cardLp=new LayoutParams(-1,-2,Gravity.CENTER_VERTICAL|Gravity.RIGHT);cardLp.leftMargin=260;cardLp.rightMargin=35;addView(card,cardLp);
+ 
+ reference=new TextView(c);reference.setGravity(Gravity.CENTER);reference.setTextColor(0xffffdf9c);reference.setTextSize(21);reference.setTypeface(Typeface.SERIF,Typeface.BOLD);reference.setPadding(22,8,22,8);GradientDrawable refBg=new GradientDrawable();refBg.setColor(0xdd07152c);refBg.setCornerRadius(38);refBg.setStroke(2,0xffd8a93c);reference.setBackground(refBg);LayoutParams refLp=new LayoutParams(-2,-2,Gravity.BOTTOM|Gravity.LEFT);refLp.setMargins(30,0,0,20);addView(reference,refLp);
+ LinearLayout card=new LinearLayout(c);card.setGravity(Gravity.CENTER);card.setOrientation(LinearLayout.VERTICAL);card.setPadding(25,22,25,22);GradientDrawable cardBg=new GradientDrawable();cardBg.setColor(0xcc07152c);cardBg.setCornerRadius(24);cardBg.setStroke(2,0xffd8a93c);card.setBackground(cardBg);LayoutParams cardLp=new LayoutParams(-1,-2,Gravity.CENTER);cardLp.leftMargin=190;cardLp.rightMargin=190;addView(card,cardLp);
  verse=new TextView(c);verse.setGravity(Gravity.CENTER);verse.setTextColor(0xfffff1d5);verse.setTextSize(34);verse.setTypeface(Typeface.SERIF,Typeface.BOLD_ITALIC);verse.setShadowLayer(5,1,2,Color.BLACK);card.addView(verse);
  TextView separator=new TextView(c);separator.setText("━━━━  ✝  ━━━━");separator.setGravity(Gravity.CENTER);separator.setTextColor(0xffffce70);separator.setTextSize(19);separator.setPadding(0,8,0,8);card.addView(separator);
  arabicVerse=new TextView(c);arabicVerse.setGravity(Gravity.CENTER);arabicVerse.setTextDirection(View.TEXT_DIRECTION_RTL);arabicVerse.setTextColor(Color.WHITE);arabicVerse.setTextSize(33);arabicVerse.setTypeface(Typeface.DEFAULT,Typeface.BOLD);arabicVerse.setShadowLayer(5,1,2,Color.BLACK);card.addView(arabicVerse);
  LinearLayout footer=new LinearLayout(c);footer.setGravity(Gravity.CENTER);footer.setOrientation(LinearLayout.HORIZONTAL);
 
- caption=new TextView(c);caption.setText("By: VELTHON Design & Development");caption.setTextColor(0xffe8e0d0);caption.setTextSize(13);caption.setShadowLayer(4,1,2,Color.BLACK);caption.setGravity(Gravity.CENTER_VERTICAL);footer.addView(caption);
- LayoutParams cp=new LayoutParams(-1,42,Gravity.BOTTOM);cp.bottomMargin=12;addView(footer,cp);
+ caption=new TextView(c);caption.setText("✝  BIBLE TV  |  Screensaver");caption.setTextColor(0xffe8e0d0);caption.setTextSize(13);caption.setShadowLayer(4,1,2,Color.BLACK);caption.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);footer.addView(caption,new LinearLayout.LayoutParams(-1,-1));
+ LayoutParams cp=new LayoutParams(-1,52,Gravity.BOTTOM);cp.bottomMargin=12;cp.leftMargin=250;cp.rightMargin=30;addView(footer,cp);
  muteButton=new TextView(c);
  muteButton.setTextSize(23);muteButton.setGravity(Gravity.CENTER);
  muteButton.setTextColor(0xffffffff);muteButton.setFocusable(true);muteButton.setClickable(true);
@@ -114,7 +114,7 @@ public class BibleDisplay extends FrameLayout {
  }
  if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}
  index=chosen;
- String[] v=verses[index];String l=prefs.getString("lang","ar");verse.setText(v[1]);verse.setVisibility(l.equals("ar")?View.GONE:View.VISIBLE);arabicVerse.setText(v[0]);arabicVerse.setVisibility(l.equals("en")?View.GONE:View.VISIBLE);reference.setText(l.equals("en")?v[4]:l.equals("both")?v[4]+" • "+v[3]:v[3]);
+ String[] v=verses[index];String l=prefs.getString("lang","ar");verse.setText(v[1]);verse.setVisibility(l.equals("ar")?View.GONE:View.VISIBLE);arabicVerse.setText(v[0]);verse.setTextSize(v[1].length()>170?23:v[1].length()>100?27:34);arabicVerse.setTextSize(v[0].length()>140?23:v[0].length()>85?27:33);arabicVerse.setVisibility(l.equals("en")?View.GONE:View.VISIBLE);reference.setText(l.equals("en")?v[4]:l.equals("both")?v[4]+" • "+v[3]:v[3]);
  int theme=prefs.getInt("style",0);
  // Link artwork to the meaning of the verse, not just the iteration number.
  String ar=v[0],en=v[1].toLowerCase(java.util.Locale.US),ref=v[2].toLowerCase(java.util.Locale.US);
@@ -166,7 +166,7 @@ public class BibleDisplay extends FrameLayout {
      String filename=artworkManifest.getJSONObject(mediaIndex).getString("file");
      try(InputStream stream=getContext().getAssets().open("jesus_art/"+filename)){
        android.graphics.BitmapFactory.Options options=new android.graphics.BitmapFactory.Options();
-       options.inPreferredConfig=Bitmap.Config.RGB_565;
+       options.inPreferredConfig=Bitmap.Config.ARGB_8888;options.inScaled=false;
        Bitmap image=BitmapFactory.decodeStream(stream,null,options);
        if(image==null)throw new IllegalStateException("Invalid artwork "+filename);
        picture.setImageBitmap(image);
