@@ -3,8 +3,9 @@
 This file is the persistent source of truth for user-approved decisions. Do not replace, reinterpret, or silently drop any item. Mark implementation and device validation separately. Never claim a release includes an item merely because its source code was edited.
 
 ## Branding — MUST MATCH EXACT ORIGINAL ASSET
-- Approved logo: **Bible TV Screensaver Logo.png**, saved in the user's ChatGPT Library. It depicts a blue/gold television, Jesus at left, an open Bible, a bright cross at right, Bible TV Screensaver lettering and Velthon branding.
-- **Do not create a substitute logo** (cross/book icon is NOT approved). Obtain exact original file bytes and include in Android launcher icon, banner and app settings as appropriate.
+- **Approved Bible TV app icon:** user-confirmed black/yellow/white TV frame with cross and Bible, with **white background** and upright (non-italic) Bible TV lettering. The exact original **VELTHON** emblem to insert is the uploaded PNG saved unmodified at ChatGPT Library `/Brand Assets/VELTHON_ORIGINAL_OFFICIAL_LOGO_UNMODIFIED.png` (library file ID `libfile_85cf5a094e0481919dab1828a17f4d69`; source user-upload file ID `file_0000000052dc822fbe04c0f386f0641c`). **Never regenerate or redraw this emblem.**
+- **Do not create a substitute logo.** Use the original user-uploaded Velthon emblem unchanged; do not substitute generated lion designs or the old Jesus-and-TV logo. The actual approved app icon is the user-uploaded TV image `file_00000000eb00822f8a6279a783a444b5`, but it requires the white-background/non-italic text adjustments and insertion of the exact original Velthon emblem.
+
 - Screensaver footer must be **text only**: `By: VELTHON Design & Development`. No additional company logo or banner on the verse screen.
 - Status: ORIGINAL LOGO NOT YET VERIFIED IN APK. Do not say complete.
 
