@@ -24,6 +24,7 @@ records=[]
 with Image.open(source) as atlas:
  atlas=atlas.convert("RGB")
  w,h=atlas.size
+ h=round(h*0.81) # Exclude promotional footer; preserve only scene tiles.
  if w<1200 or h<600:raise RuntimeError("Original art atlas too small")
  for i,category in enumerate(categories):
   row,col=divmod(i,10)
@@ -51,9 +52,12 @@ second_categories=[
 assert len(second_categories)==50
 with Image.open(second) as atlas:
  atlas=atlas.convert("RGB");w,h=atlas.size
+ h=round(h*0.89) # 9 image rows; omit promotional footer.
  for i,category in enumerate(second_categories):
-  row,col=divmod(i,10)
-  tile=atlas.crop((round(col*w/10)+2,round(row*h/5)+2,round((col+1)*w/10)-2,round((row+1)*h/5)-2))
+  # The second atlas has 11 columns x 9 rows; sample 50 distinct cells.
+  cell=(i*2)%99
+  row,col=divmod(cell,11)
+  tile=atlas.crop((round(col*w/11)+2,round(row*h/9)+2,round((col+1)*w/11)-2,round((row+1)*h/9)-2))
   tile=ImageOps.fit(tile,(960,540),method=Image.Resampling.LANCZOS)
   name="jesus_%03d.jpg"%(50+i)
   tile.save(out/name,quality=86,optimize=True)
