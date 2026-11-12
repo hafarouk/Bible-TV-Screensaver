@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
  private SharedPreferences prefs;
  private LinearLayout panel;
  private final AmbientMusic previewMusic=new AmbientMusic();
- private final int BG=0xff101b2b, GOLD=0xffffc828, WHITE=0xfff8f8f8, SUB=0xffadbac9;
+ private final int BG=0xffe8f4fa, GOLD=0xff235578, WHITE=0xff173c59, SUB=0xff486b82;
 
  @Override public void onCreate(Bundle b) {
   super.onCreate(b);prefs=getSharedPreferences("settings",MODE_PRIVATE);
@@ -32,8 +32,8 @@ public class MainActivity extends Activity {
  }
  private TextView text(String s,int size,int colour){TextView t=new TextView(this);t.setText(s);t.setTextSize(size);t.setTextColor(colour);t.setGravity(Gravity.CENTER_VERTICAL);return t;}
  private GradientDrawable bg(boolean selected,boolean focus){
-   GradientDrawable d=new GradientDrawable();d.setColor(selected?0xff725417:focus?0xff244963:0xff203145);
-   d.setStroke(focus?3:1,selected||focus?GOLD:0xff536478);d.setCornerRadius(12);return d;
+   GradientDrawable d=new GradientDrawable();d.setColor(selected?0xffb6e4ef:focus?0xffd0ecf6:0xfff6fbfd);
+   d.setStroke(focus?3:1,selected||focus?GOLD:0xffb5d0dd);d.setCornerRadius(12);return d;
  }
  private void row(String label, String key, String[] choices, String[] values, String def){
    LinearLayout line=new LinearLayout(this);line.setOrientation(LinearLayout.HORIZONTAL);line.setGravity(Gravity.CENTER_VERTICAL);
@@ -84,7 +84,7 @@ public class MainActivity extends Activity {
    panel.addView(titleRow);
    TextView sub=text("Use remote arrows to select an option",14,SUB);sub.setPadding(0,0,0,8);panel.addView(sub);
    row("Bible languages (max 2)","lang",new String[]{"Arabic","English","Arabic + English"},new String[]{"ar","en","both"},"both");
-   row("Verse time","interval_choice",new String[]{"15 sec","30 sec","60 sec","120 sec"},new String[]{"15","30","60","120"},"15");
+   row("Verse time","interval_choice",new String[]{"15 sec","30 sec","60 sec","120 sec","1 hour"},new String[]{"15","30","60","120","3600"},"15");
    row("Transition","transition_choice",new String[]{"Page turn","Soft fade","None"},new String[]{"page","fade","none"},"page");
    row("Background music","music_track",new String[]{"On","Off"},new String[]{"piano","off"},"piano");
    row("Volume","music_volume_choice",new String[]{"15%","25%","35%","50%"},new String[]{"15","25","35","50"},"25");
