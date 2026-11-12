@@ -77,8 +77,8 @@ public class MainActivity extends Activity {
  private void render(){
    panel.removeAllViews();
    LinearLayout titleRow=new LinearLayout(this);titleRow.setGravity(Gravity.CENTER_VERTICAL);titleRow.setOrientation(LinearLayout.HORIZONTAL);
-   TextView originalLogo=text("✝",30,GOLD);originalLogo.setGravity(Gravity.CENTER);
-   LinearLayout.LayoutParams originalParams=new LinearLayout.LayoutParams(43,44);originalParams.rightMargin=14;
+   ImageView originalLogo=new ImageView(this);originalLogo.setImageResource(R.drawable.velthon_original);originalLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);originalLogo.setBackgroundColor(Color.WHITE);
+   LinearLayout.LayoutParams originalParams=new LinearLayout.LayoutParams(60,60);originalParams.rightMargin=14;
    titleRow.addView(originalLogo,originalParams);
    TextView title=text("BIBLE TV  •  Settings",23,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
    panel.addView(titleRow);
