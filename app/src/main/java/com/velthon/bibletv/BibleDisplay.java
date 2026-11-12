@@ -31,7 +31,7 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 public class BibleDisplay extends FrameLayout {
  private SharedPreferences prefs;private Handler handler=new Handler(Looper.getMainLooper());
- private ImageView picture;private View fallback;private TextView verse,arabicVerse,reference,caption;
+ private ImageView picture;private View fallback;private TextView verse,arabicVerse,reference,englishRef,arabicRef,caption;
  private AnimatorSet motion;private int index=-1;private boolean running=false;
  private View turningPage;
  private SceneLoopView sceneLoop;
@@ -72,12 +72,14 @@ public class BibleDisplay extends FrameLayout {
  reference=new TextView(c);reference.setGravity(Gravity.CENTER);reference.setTextColor(0xff173b65);reference.setTextSize(21);reference.setTypeface(Typeface.SERIF,Typeface.BOLD);reference.setPadding(22,8,22,8);GradientDrawable refBg=new GradientDrawable();refBg.setColor(0x99ffffff);refBg.setCornerRadius(38);refBg.setStroke(1,0x55d8a93c);reference.setBackground(refBg);LayoutParams refLp=new LayoutParams(-2,-2,Gravity.BOTTOM|Gravity.LEFT);refLp.setMargins(30,0,0,20);addView(reference,refLp);
  LinearLayout card=new LinearLayout(c);card.setGravity(Gravity.CENTER);card.setOrientation(LinearLayout.VERTICAL);card.setPadding(25,22,25,22);GradientDrawable cardBg=new GradientDrawable();cardBg.setColor(0x55ffffff);cardBg.setCornerRadius(24);cardBg.setStroke(0,0x00ffffff);card.setBackground(cardBg);LayoutParams cardLp=new LayoutParams(-1,-2,Gravity.CENTER);cardLp.leftMargin=70;cardLp.rightMargin=70;addView(card,cardLp);
  verse=new TextView(c);verse.setGravity(Gravity.CENTER);verse.setTextColor(0xff153b65);verse.setTextSize(34);verse.setTypeface(Typeface.SERIF,Typeface.BOLD_ITALIC);verse.setShadowLayer(0,0,0,Color.TRANSPARENT);card.addView(verse);
+ englishRef=new TextView(c);englishRef.setGravity(Gravity.CENTER);englishRef.setTextColor(0xff173b65);englishRef.setTextSize(20);englishRef.setTypeface(Typeface.SERIF,Typeface.NORMAL);card.addView(englishRef);
  TextView separator=new TextView(c);separator.setText("━━━━  ✝  ━━━━");separator.setGravity(Gravity.CENTER);separator.setTextColor(0xffffce70);separator.setTextSize(19);separator.setPadding(0,8,0,8);card.addView(separator);
  arabicVerse=new TextView(c);arabicVerse.setGravity(Gravity.CENTER);arabicVerse.setTextDirection(View.TEXT_DIRECTION_RTL);arabicVerse.setTextColor(0xff153b65);arabicVerse.setTextSize(33);arabicVerse.setTypeface(Typeface.DEFAULT,Typeface.BOLD);arabicVerse.setShadowLayer(0,0,0,Color.TRANSPARENT);card.addView(arabicVerse);
+ arabicRef=new TextView(c);arabicRef.setGravity(Gravity.CENTER);arabicRef.setTextColor(0xff173b65);arabicRef.setTextSize(20);card.addView(arabicRef);
  LinearLayout footer=new LinearLayout(c);footer.setGravity(Gravity.CENTER);footer.setOrientation(LinearLayout.HORIZONTAL);
 
  ImageView officialLogo=new ImageView(c);try(InputStream logoStream=c.getAssets().open("velthon_original.b64")){ByteArrayOutputStream lb=new ByteArrayOutputStream();byte[] bb=new byte[4096];int nn;while((nn=logoStream.read(bb))!=-1)lb.write(bb,0,nn);byte[] logoBytes=android.util.Base64.decode(lb.toByteArray(),android.util.Base64.DEFAULT);officialLogo.setImageBitmap(BitmapFactory.decodeByteArray(logoBytes,0,logoBytes.length));}catch(Exception ex){android.util.Log.e("BibleTV","Velthon logo unavailable",ex);}officialLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);LayoutParams olp=new LayoutParams(105,105,Gravity.BOTTOM|Gravity.RIGHT);olp.rightMargin=16;olp.bottomMargin=12;addView(officialLogo,olp);
- caption=new TextView(c);caption.setText("✝  BIBLE TV  |  Screensaver");caption.setTextColor(0xffe8e0d0);caption.setTextSize(13);caption.setShadowLayer(4,1,2,Color.BLACK);caption.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);footer.addView(caption,new LinearLayout.LayoutParams(-1,-1));
+ caption=new TextView(c);caption.setText("");caption.setTextColor(0xffe8e0d0);caption.setTextSize(13);caption.setShadowLayer(4,1,2,Color.BLACK);caption.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);footer.addView(caption,new LinearLayout.LayoutParams(-1,-1));
  LayoutParams cp=new LayoutParams(-1,52,Gravity.BOTTOM);cp.bottomMargin=12;cp.leftMargin=250;cp.rightMargin=30;addView(footer,cp);
  muteButton=new TextView(c);
  muteButton.setTextSize(23);muteButton.setGravity(Gravity.CENTER);
@@ -86,7 +88,7 @@ public class BibleDisplay extends FrameLayout {
  GradientDrawable pill=new GradientDrawable();pill.setColor(0x99081422);pill.setCornerRadius(36);pill.setStroke(1,0x77ffffff);
  muteButton.setBackground(pill);
  FrameLayout.LayoutParams mp=new FrameLayout.LayoutParams(64,52,Gravity.TOP|Gravity.RIGHT);mp.setMargins(0,22,28,0);
- addView(muteButton,mp);
+ muteButton.setVisibility(View.GONE);
  muteButton.setOnClickListener(v->toggleMute());
  updateMuteIcon();
  }
@@ -122,7 +124,7 @@ public class BibleDisplay extends FrameLayout {
    boolean disabled="off".equals(prefs.getString("music_track","piano"));
    muteButton.setText(disabled||temporaryMuted?"🔇":"🔊");
    muteButton.setContentDescription(disabled?"Music is turned off in settings":temporaryMuted?"Unmute music":"Mute music");
-   muteButton.setVisibility(disabled?View.GONE:View.VISIBLE);
+   muteButton.setVisibility(View.GONE);
  }
  public void stop(){weatherHandler.removeCallbacksAndMessages(null);running=false;music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}}
  public void next(){handler.removeCallbacksAndMessages(null);if(!running)return;int chosen=chooseIndex();
@@ -136,7 +138,7 @@ public class BibleDisplay extends FrameLayout {
  }
  if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}
  index=chosen;
- String[] v=verses[index];String l=prefs.getString("lang","ar");verse.setText(v[1]);verse.setVisibility(l.equals("ar")?View.GONE:View.VISIBLE);arabicVerse.setText(v[0]);verse.setTextSize(v[1].length()>170?23:v[1].length()>100?27:34);arabicVerse.setTextSize(v[0].length()>140?23:v[0].length()>85?27:33);arabicVerse.setVisibility(l.equals("en")?View.GONE:View.VISIBLE);reference.setText(l.equals("en")?v[4]:l.equals("both")?v[4]+" • "+v[3]:v[3]);
+ String[] v=verses[index];String l=prefs.getString("lang","ar");verse.setText(v[1]);verse.setVisibility(l.equals("ar")?View.GONE:View.VISIBLE);arabicVerse.setText(v[0]);verse.setTextSize(v[1].length()>170?23:v[1].length()>100?27:34);arabicVerse.setTextSize(v[0].length()>140?23:v[0].length()>85?27:33);arabicVerse.setVisibility(l.equals("en")?View.GONE:View.VISIBLE);reference.setVisibility(View.GONE);englishRef.setText(v[4]);englishRef.setVisibility(l.equals("ar")?View.GONE:View.VISIBLE);arabicRef.setText(v[3]);arabicRef.setVisibility(l.equals("en")?View.GONE:View.VISIBLE);
  int theme=prefs.getInt("style",0);
  // Link artwork to the meaning of the verse, not just the iteration number.
  String ar=v[0],en=v[1].toLowerCase(java.util.Locale.US),ref=v[2].toLowerCase(java.util.Locale.US);
