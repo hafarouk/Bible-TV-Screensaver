@@ -6,7 +6,7 @@ android {
         applicationId 'com.velthon.bibletv'
         minSdk 23
         targetSdk 28
-        versionCode 7
-        versionName '1.6-gif-scenes'
+        versionCode 12
+        versionName '1.11-jesus-artwork'
     }
 }

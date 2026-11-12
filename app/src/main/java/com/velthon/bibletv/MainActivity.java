@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.HorizontalScrollView;
 
 /** A D-pad accessible two-column TV settings layout. Choices are visible inline, not hidden in a cycling button. */
 public class MainActivity extends Activity {
@@ -21,75 +22,88 @@ public class MainActivity extends Activity {
  private SharedPreferences prefs;
  private LinearLayout panel;
  private final AmbientMusic previewMusic=new AmbientMusic();
- private final int BG=0xff101b2b, GOLD=0xffffc828, WHITE=0xfff8f8f8, SUB=0xffadbac9;
+ private final int BG=0xffe8f4fa, GOLD=0xff235578, WHITE=0xff173c59, SUB=0xff486b82;
 
  @Override public void onCreate(Bundle b) {
   super.onCreate(b);prefs=getSharedPreferences("settings",MODE_PRIVATE);
   ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setBackgroundColor(BG);
-  panel=new LinearLayout(this);panel.setPadding(26,18,26,20);panel.setOrientation(LinearLayout.VERTICAL);
+  panel=new LinearLayout(this);panel.setPadding(28,22,28,22);panel.setOrientation(LinearLayout.VERTICAL);
   scroll.addView(panel);setContentView(scroll);render();
  }
  private TextView text(String s,int size,int colour){TextView t=new TextView(this);t.setText(s);t.setTextSize(size);t.setTextColor(colour);t.setGravity(Gravity.CENTER_VERTICAL);return t;}
  private GradientDrawable bg(boolean selected,boolean focus){
-   GradientDrawable d=new GradientDrawable();d.setColor(selected?0xff725417:focus?0xff244963:0xff203145);
-   d.setStroke(focus?3:1,selected||focus?GOLD:0xff536478);d.setCornerRadius(12);return d;
+   GradientDrawable d=new GradientDrawable();d.setColor(selected?0xffb6e4ef:focus?0xffd0ecf6:0xfff6fbfd);
+   d.setStroke(focus?3:1,selected||focus?GOLD:0xffb5d0dd);d.setCornerRadius(12);return d;
  }
  private void row(String label, String key, String[] choices, String[] values, String def){
    LinearLayout line=new LinearLayout(this);line.setOrientation(LinearLayout.HORIZONTAL);line.setGravity(Gravity.CENTER_VERTICAL);
-   LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,58);lp.setMargins(0,3,0,3);panel.addView(line,lp);
-   TextView t=text(label,17,WHITE);t.setTypeface(null,Typeface.BOLD);
-   line.addView(t,new LinearLayout.LayoutParams(250,-1));
-   LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.HORIZONTAL);
-   line.addView(controls,new LinearLayout.LayoutParams(0,-1,1));
+   LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,68);lp.setMargins(0,2,0,2);panel.addView(line,lp);
+   TextView t=text(label,16,WHITE);t.setTypeface(null,Typeface.BOLD);t.setSingleLine(true);
+   line.addView(t,new LinearLayout.LayoutParams(190,-1));
+   HorizontalScrollView strip=new HorizontalScrollView(this);strip.setHorizontalScrollBarEnabled(false);strip.setFillViewport(false);
+   line.addView(strip,new LinearLayout.LayoutParams(0,-1,1));
+   LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.HORIZONTAL);strip.addView(controls);
    String current=prefs.getString(key,def);
    for(int i=0;i<choices.length;i++){
      final String choice=values[i];final boolean selected=choice.equals(current);
-     Button bt=new Button(this);bt.setText(choices[i]);bt.setTextSize(15);bt.setAllCaps(false);
-     bt.setTextColor(WHITE);bt.setPadding(2,0,2,0);bt.setBackground(bg(selected,false));
-     LinearLayout.LayoutParams bp=new LinearLayout.LayoutParams(0,48,1);bp.setMargins(3,3,3,3);controls.addView(bt,bp);
-     bt.setOnFocusChangeListener((v,focused)->bt.setBackground(bg(choice.equals(prefs.getString(key,def)),focused)));
+     Button bt=new Button(this);bt.setText(choices[i]);bt.setTextSize(14);bt.setAllCaps(false);
+     bt.setSingleLine(true);bt.setTextColor(WHITE);bt.setPadding(8,0,8,0);bt.setBackground(bg(selected,false));
+     LinearLayout.LayoutParams bp=new LinearLayout.LayoutParams(-2,54);bp.setMargins(3,3,3,3);controls.addView(bt,bp);
+     bt.setOnFocusChangeListener((v,focused)->{
+       bt.setBackground(bg(choice.equals(prefs.getString(key,def)),focused));
+       if(focused)strip.post(()->strip.smoothScrollTo(Math.max(0,bt.getLeft()-20),0));
+     });
      bt.setOnClickListener(v->{prefs.edit().putString(key,choice).apply();render();});
    }
  }
  private void action(String label,Runnable r){
-   Button b=new Button(this);b.setText(label);b.setTextSize(17);b.setTextColor(WHITE);b.setAllCaps(false);
-   b.setBackground(bg(false,false));LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,54);p.setMargins(0,7,0,0);panel.addView(b,p);
-   b.setOnClickListener(v->r.run());b.setOnFocusChangeListener((v,f)->b.setBackground(bg(false,f)));
+   TextView control=text(label,20,WHITE);
+   control.setGravity(Gravity.CENTER);
+   control.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
+   control.setSingleLine(false);
+   control.setIncludeFontPadding(true);
+   control.setPadding(20,12,20,12);
+   control.setFocusable(true);
+   control.setFocusableInTouchMode(false);
+   control.setClickable(true);
+   control.setBackground(bg(false,false));
+   LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,-2);
+   p.setMargins(0,10,0,0);
+   panel.addView(control,p);
+   control.setMinHeight(76);
+   control.setOnClickListener(v->r.run());
+   control.setOnFocusChangeListener((v,focused)->control.setBackground(bg(false,focused)));
  }
  private void render(){
    panel.removeAllViews();
    LinearLayout titleRow=new LinearLayout(this);titleRow.setGravity(Gravity.CENTER_VERTICAL);titleRow.setOrientation(LinearLayout.HORIZONTAL);
-   ImageView originalLogo=new ImageView(this);originalLogo.setImageResource(R.drawable.velthon_original);originalLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
-   LinearLayout.LayoutParams originalParams=new LinearLayout.LayoutParams(43,44);originalParams.rightMargin=14;
+   ImageView originalLogo=new ImageView(this);originalLogo.setImageResource(R.drawable.velthon_original);originalLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);originalLogo.setBackgroundColor(Color.WHITE);
+   LinearLayout.LayoutParams originalParams=new LinearLayout.LayoutParams(60,60);originalParams.rightMargin=14;
    titleRow.addView(originalLogo,originalParams);
-   TextView title=text("✝  BIBLE TV v1.6   |   آيات الكتاب المقدس",27,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
+   TextView title=text("BIBLE TV  •  Settings",23,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
    panel.addView(titleRow);
-   TextView sub=text("Screensaver settings  •  Select directly within each row using your remote",14,SUB);sub.setPadding(0,0,0,8);panel.addView(sub);
-   row("Language / اللغة","lang",new String[]{"العربية","English","Both"},new String[]{"ar","en","both"},"ar");
-   row("Verse duration","interval_choice",new String[]{"15 sec","30 sec","60 sec","120 sec"},new String[]{"15","30","60","120"},"15");
-   row("Background scenes","style_choice",new String[]{"Jesus & Bible","Nature","Mixed"},new String[]{"0","1","2"},"0");
-   row("Picture movement","motion_choice",new String[]{"On","Off"},new String[]{"true","false"},"true");
-   row("Verse transition","transition_choice",new String[]{"Page turn","Soft fade","None"},new String[]{"page","fade","none"},"page");
-   row("Animation speed","motion_speed_choice",new String[]{"Slow","Medium","Faster"},new String[]{"0","1","2"},"0");
-   row("Background music","music_track",new String[]{"Off","Soft Piano","Gentle Strings","Peaceful Ambient"},new String[]{"off","piano","strings","ambient"},"piano");
-   row("Music volume","music_volume_choice",new String[]{"15%","25%","35%","50%"},new String[]{"15","25","35","50"},"25");
-   action("♫  Preview selected music (tap again to stop)",()->{
+   TextView sub=text("Use remote arrows to select an option",14,SUB);sub.setPadding(0,0,0,8);panel.addView(sub);
+   row("Bible languages (max 2)","lang",new String[]{"Arabic","English","Arabic + English"},new String[]{"ar","en","both"},"both");
+   row("Verse time","interval_choice",new String[]{"15 sec","30 sec","60 sec","120 sec","1 hour"},new String[]{"15","30","60","120","3600"},"15");
+   row("Transition","transition_choice",new String[]{"Page turn","Soft fade","None"},new String[]{"page","fade","none"},"page");
+   row("Background music","music_track",new String[]{"On","Off"},new String[]{"piano","off"},"piano");
+   row("Volume","music_volume_choice",new String[]{"15%","25%","35%","50%"},new String[]{"15","25","35","50"},"25");
+   action("Test music",()->{
       String choice=prefs.getString("music_track","piano");
-      if("off".equals(choice)){previewMusic.stop();new android.app.AlertDialog.Builder(this).setMessage("Select a music option first.").setPositiveButton("OK",null).show();}
-      else {previewMusic.start(this,Integer.parseInt(prefs.getString("music_volume_choice","25")),choice);android.widget.Toast.makeText(this,"Now playing "+choice+" • adjust TV volume to hear",android.widget.Toast.LENGTH_LONG).show();}
+      if("off".equals(choice)){previewMusic.stop();new android.app.AlertDialog.Builder(this).setMessage("Turn background music on first.").setPositiveButton("OK",null).show();}
+      else {previewMusic.start(this,Integer.parseInt(prefs.getString("music_volume_choice","25")),choice);android.widget.Toast.makeText(this,"Music preview playing",android.widget.Toast.LENGTH_LONG).show();}
    });
-   action("▶   Preview Bible TV screensaver",()->startActivity(new Intent(this,PreviewActivity.class)));
-   action("⚙   Open TV screensaver selection",this::openTvSettings);
-   TextView help=text("Android TV: Settings → Device Preferences → Screen saver. Some Google TV and Fire OS devices block third-party screen saver selection.",13,SUB);
-   help.setPadding(6,10,0,4);panel.addView(help);
-   TextView signature=text("© Velthon Design & Development  •  SVD (1865) and KJV (1769): public domain  •  Music: original",13,GOLD);signature.setGravity(Gravity.CENTER);panel.addView(signature);
+   action("Preview screensaver",()->startActivity(new Intent(this,PreviewActivity.class)));
+
+
+   
    prefs.edit()
      .putInt("interval",Integer.parseInt(prefs.getString("interval_choice","15")))
      .putInt("style",Integer.parseInt(prefs.getString("style_choice","0")))
      .putBoolean("motion",Boolean.parseBoolean(prefs.getString("motion_choice","true")))
      .putInt("motion_speed",Integer.parseInt(prefs.getString("motion_speed_choice","0")))
      .putBoolean("music",!"off".equals(prefs.getString("music_track","off")) )
-     .putInt("music_volume",Integer.parseInt(prefs.getString("music_volume_choice","10")))
+     .putInt("music_volume",Integer.parseInt(prefs.getString("music_volume_choice","25")))
      .apply();
  }
  private void openTvSettings(){
