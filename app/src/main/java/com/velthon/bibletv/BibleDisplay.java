@@ -66,19 +66,19 @@ public class BibleDisplay extends FrameLayout {
  fallback=new View(c);fallback.setBackground(new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{0xffd9edff,0xfff9f5ee,0xfff5e7d3}));addView(fallback,new LayoutParams(-1,-1));
  picture=new ImageView(c);picture.setScaleType(ImageView.ScaleType.CENTER_CROP);addView(picture,new LayoutParams(-1,-1));picture.setVisibility(View.GONE);
 
- weatherHeader=new TextView(c);weatherHeader.setTextColor(0xff173b65);weatherHeader.setTextSize(18);weatherHeader.setGravity(Gravity.CENTER);weatherHeader.setPadding(18,9,18,9);weatherHeader.setBackgroundColor(0x66ffffff);LayoutParams wh=new LayoutParams(-2,-2,Gravity.TOP|Gravity.CENTER_HORIZONTAL);wh.topMargin=18;addView(weatherHeader,wh);weatherHeader.setText("Loading weather...");
+ weatherHeader=new TextView(c);weatherHeader.setTextColor(0xff173b65);weatherHeader.setTextSize(22);weatherHeader.setGravity(Gravity.CENTER);weatherHeader.setPadding(18,9,18,9);weatherHeader.setBackgroundColor(0x66ffffff);LayoutParams wh=new LayoutParams(-2,-2,Gravity.TOP|Gravity.CENTER_HORIZONTAL);wh.topMargin=18;addView(weatherHeader,wh);weatherHeader.setText("Loading weather...");
  View shade=new View(c);shade.setBackgroundColor(0x00000000);addView(shade,new LayoutParams(-1,-1));
  
  reference=new TextView(c);reference.setGravity(Gravity.CENTER);reference.setTextColor(0xff173b65);reference.setTextSize(21);reference.setTypeface(Typeface.SERIF,Typeface.BOLD);reference.setPadding(22,8,22,8);GradientDrawable refBg=new GradientDrawable();refBg.setColor(0x99ffffff);refBg.setCornerRadius(38);refBg.setStroke(1,0x55d8a93c);reference.setBackground(refBg);LayoutParams refLp=new LayoutParams(-2,-2,Gravity.BOTTOM|Gravity.LEFT);refLp.setMargins(30,0,0,20);addView(reference,refLp);
  LinearLayout card=new LinearLayout(c);card.setGravity(Gravity.CENTER);card.setOrientation(LinearLayout.VERTICAL);card.setPadding(25,22,25,22);GradientDrawable cardBg=new GradientDrawable();cardBg.setColor(0x55ffffff);cardBg.setCornerRadius(24);cardBg.setStroke(0,0x00ffffff);card.setBackground(cardBg);LayoutParams cardLp=new LayoutParams(-1,-2,Gravity.CENTER);cardLp.leftMargin=70;cardLp.rightMargin=70;addView(card,cardLp);
- verse=new TextView(c);verse.setGravity(Gravity.CENTER);verse.setTextColor(0xff153b65);verse.setTextSize(34);verse.setTypeface(Typeface.SERIF,Typeface.BOLD_ITALIC);verse.setShadowLayer(0,0,0,Color.TRANSPARENT);card.addView(verse);
+ verse=new TextView(c);verse.setGravity(Gravity.CENTER);verse.setTextColor(0xff153b65);verse.setTextSize(34);verse.setTypeface(Typeface.SERIF,Typeface.NORMAL);verse.setShadowLayer(0,0,0,Color.TRANSPARENT);card.addView(verse);
  englishRef=new TextView(c);englishRef.setGravity(Gravity.CENTER);englishRef.setTextColor(0xff173b65);englishRef.setTextSize(20);englishRef.setTypeface(Typeface.SERIF,Typeface.NORMAL);card.addView(englishRef);
  TextView separator=new TextView(c);separator.setText("━━━━  ✝  ━━━━");separator.setGravity(Gravity.CENTER);separator.setTextColor(0xffffce70);separator.setTextSize(19);separator.setPadding(0,8,0,8);card.addView(separator);
- arabicVerse=new TextView(c);arabicVerse.setGravity(Gravity.CENTER);arabicVerse.setTextDirection(View.TEXT_DIRECTION_RTL);arabicVerse.setTextColor(0xff153b65);arabicVerse.setTextSize(33);arabicVerse.setTypeface(Typeface.DEFAULT,Typeface.BOLD);arabicVerse.setShadowLayer(0,0,0,Color.TRANSPARENT);card.addView(arabicVerse);
+ arabicVerse=new TextView(c);arabicVerse.setGravity(Gravity.CENTER);arabicVerse.setTextDirection(View.TEXT_DIRECTION_RTL);arabicVerse.setTextColor(0xff153b65);arabicVerse.setTextSize(33);arabicVerse.setTypeface(Typeface.DEFAULT,Typeface.NORMAL);arabicVerse.setShadowLayer(0,0,0,Color.TRANSPARENT);card.addView(arabicVerse);
  arabicRef=new TextView(c);arabicRef.setGravity(Gravity.CENTER);arabicRef.setTextColor(0xff173b65);arabicRef.setTextSize(20);card.addView(arabicRef);
  LinearLayout footer=new LinearLayout(c);footer.setGravity(Gravity.CENTER);footer.setOrientation(LinearLayout.HORIZONTAL);
 
- ImageView officialLogo=new ImageView(c);try(InputStream logoStream=c.getAssets().open("velthon_original.b64")){ByteArrayOutputStream lb=new ByteArrayOutputStream();byte[] bb=new byte[4096];int nn;while((nn=logoStream.read(bb))!=-1)lb.write(bb,0,nn);byte[] logoBytes=android.util.Base64.decode(lb.toByteArray(),android.util.Base64.DEFAULT);officialLogo.setImageBitmap(BitmapFactory.decodeByteArray(logoBytes,0,logoBytes.length));}catch(Exception ex){android.util.Log.e("BibleTV","Velthon logo unavailable",ex);}officialLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);LayoutParams olp=new LayoutParams(105,105,Gravity.BOTTOM|Gravity.RIGHT);olp.rightMargin=16;olp.bottomMargin=12;addView(officialLogo,olp);
+ ImageView officialLogo=new ImageView(c);try(InputStream logoStream=c.getAssets().open("velthon_original.b64")){ByteArrayOutputStream lb=new ByteArrayOutputStream();byte[] bb=new byte[4096];int nn;while((nn=logoStream.read(bb))!=-1)lb.write(bb,0,nn);byte[] logoBytes=android.util.Base64.decode(lb.toByteArray(),android.util.Base64.DEFAULT);officialLogo.setImageBitmap(BitmapFactory.decodeByteArray(logoBytes,0,logoBytes.length));}catch(Exception ex){android.util.Log.e("BibleTV","Velthon logo unavailable",ex);}officialLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);officialLogo.setBackgroundColor(Color.WHITE);officialLogo.setPadding(4,4,4,4);LayoutParams olp=new LayoutParams(105,105,Gravity.BOTTOM|Gravity.RIGHT);olp.rightMargin=8;olp.bottomMargin=8;addView(officialLogo,olp);
  caption=new TextView(c);caption.setText("");caption.setTextColor(0xffe8e0d0);caption.setTextSize(13);caption.setShadowLayer(4,1,2,Color.BLACK);caption.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);footer.addView(caption,new LinearLayout.LayoutParams(-1,-1));
  LayoutParams cp=new LayoutParams(-1,52,Gravity.BOTTOM);cp.bottomMargin=12;cp.leftMargin=250;cp.rightMargin=30;addView(footer,cp);
  muteButton=new TextView(c);
@@ -160,7 +160,7 @@ public class BibleDisplay extends FrameLayout {
  picture.animate().cancel();
  if(motion!=null){motion.cancel();motion=null;}
  picture.setScaleX(1f);picture.setScaleY(1f);picture.setTranslationX(0);picture.setTranslationY(0);
- picture.setVisibility(View.GONE);picture.setAlpha(1f);
+ picture.setVisibility(View.GONE);picture.setAlpha(0.22f);
  try{
    if(artworkManifest.length()>0){
      String wanted=selectedScene;
@@ -193,10 +193,10 @@ public class BibleDisplay extends FrameLayout {
        options.inPreferredConfig=Bitmap.Config.ARGB_8888;options.inScaled=false;
        Bitmap image=BitmapFactory.decodeStream(stream,null,options);
        if(image==null)throw new IllegalStateException("Invalid artwork "+filename);
-       picture.setImageBitmap(image);
+       picture.setImageBitmap(image);picture.setVisibility(View.VISIBLE);
      }
-   }else picture.setImageResource(ART[photo]);
- }catch(Exception error){android.util.Log.e("BibleTV","Could not display artwork",error);picture.setImageResource(ART[photo]);}
+   }else {picture.setImageResource(ART[photo]);picture.setVisibility(View.VISIBLE);}
+ }catch(Exception error){android.util.Log.e("BibleTV","Could not display artwork",error);picture.setImageResource(ART[photo]);picture.setVisibility(View.VISIBLE);}
  if(previousScreen!=null)animateTransition(previousScreen,transition);
  handler.postDelayed(()->next(),Math.max(15,prefs.getInt("interval",30))*1000L);
  }
