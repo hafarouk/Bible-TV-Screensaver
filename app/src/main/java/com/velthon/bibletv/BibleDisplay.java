@@ -35,6 +35,7 @@ public class BibleDisplay extends FrameLayout {
  private ImageView picture;private View fallback;private TextView verse,reference,caption;
  private AnimatorSet motion;private int index=-1;private boolean running=false;
  private ImageView turningPage;
+ private RainGlassTransitionView rainTransition;
  private SceneLoopView sceneLoop;
  private TextView sceneTag;
  private TextView muteButton;
@@ -107,7 +108,7 @@ public class BibleDisplay extends FrameLayout {
    muteButton.setContentDescription(disabled?"Music is turned off in settings":temporaryMuted?"Unmute music":"Mute music");
    muteButton.setVisibility(disabled?View.GONE:View.VISIBLE);
  }
- public void stop(){running=false;music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}}
+ public void stop(){running=false;music.stop();handler.removeCallbacksAndMessages(null);if(motion!=null)motion.cancel();if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}if(rainTransition!=null){RainGlassTransitionView old=rainTransition;rainTransition=null;old.finish();removeView(old);}}
  public void next(){handler.removeCallbacksAndMessages(null);if(!running)return;int chosen=chooseIndex();
  if(chosen<0){handler.postDelayed(()->next(),1000L);return;}
  // Capture the previous screen before changing its verse, for an animated Bible page turn.
@@ -118,6 +119,7 @@ public class BibleDisplay extends FrameLayout {
    catch(OutOfMemoryError ignored){previousScreen=null;}
  }
  if(turningPage!=null){turningPage.animate().cancel();removeView(turningPage);turningPage=null;}
+ if(rainTransition!=null){RainGlassTransitionView old=rainTransition;rainTransition=null;old.finish();removeView(old);}
  index=chosen;
  String[] v=verses[index];String l=prefs.getString("lang","ar");verse.setText(l.equals("en")?v[1]:l.equals("both")?v[0]+"\n\n"+v[1]:v[0]);reference.setText(v[2]);
  int theme=prefs.getInt("style",0);
@@ -136,8 +138,14 @@ public class BibleDisplay extends FrameLayout {
  picture.setImageResource(ART[photo]);
  picture.setAlpha(0f);picture.animate().alpha(1f).setDuration(850).start();
  animatePicture();
- if(previousScreen!=null)animateTransition(previousScreen,transition);
- handler.postDelayed(()->next(),Math.max(15,prefs.getInt("interval",30))*1000L);
+ if(previousScreen!=null){
+   if("rain".equals(transition))animateRainTransition(previousScreen);
+   else animateTransition(previousScreen,transition);
+ }
+ // Preserve the requested verse viewing interval after the full rain effect finishes.
+ long nextDelay=Math.max(15,prefs.getInt("interval",30))*1000L;
+ if(previousScreen!=null && "rain".equals(transition))nextDelay+=RainGlassTransitionView.DURATION_MS;
+ handler.postDelayed(()->next(),nextDelay);
  }
  // The translation pair comes from public-domain SVD and KJV, packaged for offline use.
  private String[][] loadVerses(Context context){
@@ -165,6 +173,18 @@ public class BibleDisplay extends FrameLayout {
    int chosen=eligible.get(random.nextInt(eligible.size()));
    prefs.edit().putLong("verse_seen_"+verses[chosen][2],now).apply();
    return chosen;
+ }
+ private void animateRainTransition(Bitmap oldScreen){
+   final RainGlassTransitionView[] holder=new RainGlassTransitionView[1];
+   RainGlassTransitionView overlay=new RainGlassTransitionView(getContext(),oldScreen,()->{
+     RainGlassTransitionView view=holder[0];
+     if(view!=null && view.getParent()==this)removeView(view);
+     if(rainTransition==view)rainTransition=null;
+     if(!oldScreen.isRecycled())oldScreen.recycle();
+   });
+   holder[0]=overlay;
+   rainTransition=overlay;
+   addView(overlay,new FrameLayout.LayoutParams(-1,-1));
  }
  private void animateTransition(Bitmap oldScreen,String type){
    ImageView page=new ImageView(getContext());
