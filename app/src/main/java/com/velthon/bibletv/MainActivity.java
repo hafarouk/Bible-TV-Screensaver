@@ -69,7 +69,7 @@ public class MainActivity extends Activity {
    row("Verse duration","interval_choice",new String[]{"15 sec","30 sec","60 sec","120 sec"},new String[]{"15","30","60","120"},"15");
    row("Background scenes","style_choice",new String[]{"Jesus & Bible","Nature","Mixed"},new String[]{"0","1","2"},"0");
    row("Picture movement","motion_choice",new String[]{"On","Off"},new String[]{"true","false"},"true");
-   row("Verse transition","transition_choice",new String[]{"Page turn","Soft fade","None"},new String[]{"page","fade","none"},"page");
+   row("Verse transition","transition_choice",new String[]{"Rain on glass","Page turn","Soft fade","None"},new String[]{"rain","page","fade","none"},"rain");
    row("Animation speed","motion_speed_choice",new String[]{"Slow","Medium","Faster"},new String[]{"0","1","2"},"0");
    row("Background music","music_track",new String[]{"Off","Soft Piano","Gentle Strings","Peaceful Ambient"},new String[]{"off","piano","strings","ambient"},"piano");
    row("Music volume","music_volume_choice",new String[]{"15%","25%","35%","50%"},new String[]{"15","25","35","50"},"25");
