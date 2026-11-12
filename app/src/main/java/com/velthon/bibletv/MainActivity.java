@@ -83,20 +83,19 @@ public class MainActivity extends Activity {
    TextView title=text("BIBLE TV  •  Settings",23,GOLD);title.setTypeface(null,Typeface.BOLD);titleRow.addView(title);
    panel.addView(titleRow);
    TextView sub=text("Use remote arrows to select an option",14,SUB);sub.setPadding(0,0,0,8);panel.addView(sub);
-   row("Language / اللغة","lang",new String[]{"العربية","English","Both"},new String[]{"ar","en","both"},"ar");
+   row("Bible languages (max 2)","lang",new String[]{"Arabic","English","Arabic + English"},new String[]{"ar","en","both"},"both");
    row("Verse time","interval_choice",new String[]{"15 sec","30 sec","60 sec","120 sec"},new String[]{"15","30","60","120"},"15");
    row("Transition","transition_choice",new String[]{"Page turn","Soft fade","None"},new String[]{"page","fade","none"},"page");
-   row("Music","music_track",new String[]{"Off","Piano","Strings","Ambient"},new String[]{"off","piano","strings","ambient"},"piano");
+   row("Background music","music_track",new String[]{"On","Off"},new String[]{"piano","off"},"piano");
    row("Volume","music_volume_choice",new String[]{"15%","25%","35%","50%"},new String[]{"15","25","35","50"},"25");
    action("Test music",()->{
       String choice=prefs.getString("music_track","piano");
-      if("off".equals(choice)){previewMusic.stop();new android.app.AlertDialog.Builder(this).setMessage("Select a music option first.").setPositiveButton("OK",null).show();}
-      else {previewMusic.start(this,Integer.parseInt(prefs.getString("music_volume_choice","25")),choice);android.widget.Toast.makeText(this,"Now playing "+choice+" • adjust TV volume to hear",android.widget.Toast.LENGTH_LONG).show();}
+      if("off".equals(choice)){previewMusic.stop();new android.app.AlertDialog.Builder(this).setMessage("Turn background music on first.").setPositiveButton("OK",null).show();}
+      else {previewMusic.start(this,Integer.parseInt(prefs.getString("music_volume_choice","25")),choice);android.widget.Toast.makeText(this,"Music preview playing",android.widget.Toast.LENGTH_LONG).show();}
    });
    action("Preview screensaver",()->startActivity(new Intent(this,PreviewActivity.class)));
-   action("TV screensaver settings",this::openTvSettings);
-   TextView help=text("If TV settings do not open, select Screen saver from your TV settings.",13,SUB);
-   help.setPadding(6,10,0,4);panel.addView(help);
+
+
    
    prefs.edit()
      .putInt("interval",Integer.parseInt(prefs.getString("interval_choice","15")))
