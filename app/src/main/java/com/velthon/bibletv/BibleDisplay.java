@@ -95,6 +95,7 @@ public class BibleDisplay extends FrameLayout {
  public void start(){running=true;updateWeather();temporaryMuted=false;applyMusic();updateMuteIcon();next();}
  private void updateWeather(){
   if(!running)return;
+  weatherHandler.removeCallbacksAndMessages(null);
   java.text.SimpleDateFormat clock=new java.text.SimpleDateFormat("h:mm a",java.util.Locale.CANADA);
   String city=prefs.getString("weather_city","Gravenhurst");
   weatherHeader.setText(city+"  |  "+clock.format(new java.util.Date())+"  |  Weather loading");
@@ -110,7 +111,7 @@ public class BibleDisplay extends FrameLayout {
    post(()->{if(running){weatherHeader.setTag(result);weatherHeader.setText(result+"  |  "+clock.format(new java.util.Date()));}});
   }catch(Exception ex){post(()->{if(running)weatherHeader.setText(city+"  |  "+clock.format(new java.util.Date())+"  |  Weather unavailable");});}
   }).start();
-  weatherHandler.postDelayed(()->{if(running){String data=(String)weatherHeader.getTag();if(data!=null)weatherHeader.setText(data+"  |  "+clock.format(new java.util.Date()));weatherHandler.postDelayed(()->updateWeather(),60000);}},60000);
+  weatherHandler.postDelayed(()->updateWeather(),60000);
  }
  private static String readAll(InputStream in)throws Exception{ByteArrayOutputStream b=new ByteArrayOutputStream();byte[] buf=new byte[4096];int n;while((n=in.read(buf))!=-1)b.write(buf,0,n);return b.toString("UTF-8");}
  public void toggleMute(){temporaryMuted=!temporaryMuted;applyMusic();updateMuteIcon();}
